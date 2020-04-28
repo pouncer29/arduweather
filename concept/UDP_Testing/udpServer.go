@@ -9,6 +9,14 @@ import (
 	"time"
 )
 
+type entry struct {
+	 Time int64 `json:"time"`
+	 Humidity float32 `json:"humidity"`
+	 Temp float32 `json:"temp"`
+	 WindSpeed float32 `json:"wind_speed"`
+	 WindDir string `json:"wind_dir"`
+}
+
 func random(min, max int) int {
 	return rand.Intn(max-min) + min
 }
@@ -55,3 +63,11 @@ func main() {
 		}
 	}
 }
+
+func toDatabase(e *entry) string{
+	println("Sending to DB ...")
+	row := fmt.Sprintf("T:%f, H:%f, WS:%f, WD: %s, Time: %s",
+		e.Temp, e.Humidity, e.WindSpeed, e.WindDir, time.Unix(e.Time,0))
+	return  row
+}
+

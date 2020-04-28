@@ -13,6 +13,9 @@ import json
 import time
 import random
 
+dbAddr = "172.16.1.69"
+dbPort = 20001
+
 def generateRandomEntry():
 	entry = dict()
 	entry['time'] = int(time.time())
@@ -33,7 +36,7 @@ while ...:
 	print("sending: " + toSend)
 
 	bytesToSend         = str.encode(toSend + "}")
-	serverAddressPort   = ("127.0.0.1", 20001)
+	serverAddressPort   = (dbAddr, dbPort)
 	bufferSize          = 1024
 
 	# Send to server using created UDP socket
