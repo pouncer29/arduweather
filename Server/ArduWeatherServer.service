@@ -1,0 +1,14 @@
+[Unit]
+Description=Ardweather UDP server
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=10
+User=pi
+ExecStart=/home/pi/Projects/arduweather/Server/adwServer 2>> /home/Projects/arduweather/Server/log.txt
+
+
+[Install]
+WantedBy=multi-user.target
+
