@@ -18,11 +18,9 @@ dbPort = 20001
 
 def generateRandomEntry():
 	entry = dict()
-	entry['Time'] = str((time.time()))
 	entry['Humidity'] = ("%.2f" % (random.random() * 100))
 	entry['Temp'] = ("%.2f" % (random.random() * 100))
 	entry['WindSpeed'] = ("%.2f" % (random.random() * 100))
-	entry['WindDir'] = random.choice('nesw')
 	entry['Brightness'] = ("%.2f" % (random.random() * 100))
 	
 	return json.dumps(entry)
