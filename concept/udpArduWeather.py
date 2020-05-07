@@ -18,7 +18,6 @@ dbPort = 20001
 
 def generateRandomEntry():
 	entry = dict()
-	entry['time'] = int(time.time())
 	entry['humidity'] = (random.random() * 100)
 	entry['temp'] = (random.random() * 100)
 	entry['wind_speed'] =(random.random() * 100)
