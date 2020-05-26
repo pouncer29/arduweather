@@ -71,11 +71,16 @@ void setup() {
 
 
 float getTemperature(){
-  return analogRead(A0);
+  int correction = -4;
+  float reading = analogRead(A0);
+  float voltage = reading * 5.0;
+  voltage = voltage / 1024.0;
+  float temp = (voltage - 0.5) * 100;
+  return temp + correction;
 }
 
 float getHumidity(){
-  return 6;
+  return 0;
 }
 
 float getBright(){
@@ -83,7 +88,7 @@ float getBright(){
 }
 
 float getWindSpeed(){
-  return 12;
+  return 0;
 }
 
 /** Entry Creation */
@@ -106,7 +111,7 @@ void loop() {
 
   Serial.println("Looping");
  
-    IPAddress remoteIP(172,16,1,74);
+    IPAddress remoteIP(172,16,1,68);
     Serial.print(remoteIP);
     Serial.println(20001);
 
@@ -120,8 +125,9 @@ void loop() {
     Udp.println();
     Udp.endPacket();
 
-    //uint64_t delayTime = 60UL * 60UL * 1000UL;
-    delay(15000);
+    uint64_t delayTime = 60UL * 60UL * 1000UL;
+    //Serial.print("DelayTime:");Serial.println(delayTime);
+    delay(delayTime);
   
 }
 
