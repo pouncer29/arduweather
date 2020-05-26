@@ -14,6 +14,8 @@
 #include <SPI.h>
 #include <WiFiNINA.h>
 #include <WiFiUdp.h>
+#include <ArduinoJson.h>
+
 
 int status = WL_IDLE_STATUS;
 #include "arduino_secrets.h" 
@@ -67,6 +69,39 @@ void setup() {
   Udp.begin(localPort);
 }
 
+
+float getTemperature(){
+  return analogRead(A0);
+}
+
+float getHumidity(){
+  return 6;
+}
+
+float getBright(){
+  return analogRead(A1);
+}
+
+float getWindSpeed(){
+  return 12;
+}
+
+/** Entry Creation */
+StaticJsonDocument<256> createEntry(){
+  StaticJsonDocument<256> entry;
+  float temp = getTemperature();
+  float humidity = getHumidity();
+  float brightness = getBright();
+  float windSpeed = getWindSpeed();
+  
+  entry["Temp"] = temp;
+  entry["Humidity"] = humidity;
+  entry["Brightness"] = brightness;
+  entry["WindSpeed"] = windSpeed;
+
+  return entry;
+}
+
 void loop() {
 
   Serial.println("Looping");
@@ -75,11 +110,18 @@ void loop() {
     Serial.print(remoteIP);
     Serial.println(20001);
 
+    StaticJsonDocument<256> doc = createEntry();
+
     // send a reply, to the IP address and port that sent us the packet we received
     Udp.beginPacket(remoteIP, 20001);
-    Udp.write(ReplyBuffer);
+    Serial.println("Sending:");
+    serializeJson(doc,Serial);
+    serializeJson(doc,Udp);
+    Udp.println();
     Udp.endPacket();
-    delay(10000);
+
+    //uint64_t delayTime = 60UL * 60UL * 1000UL;
+    delay(15000);
   
 }
 
