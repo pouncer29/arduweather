@@ -12,10 +12,10 @@ import (
 
 /* Structs */
 type entry struct {
-	 Humidity string `json:"Humidity"`
-	 Temp string `json:"Temp"`
-	 WindSpeed string `json:"WindSpeed"`
-	 Brightness string `json:Brightness`
+	 Humidity float32 `json:"Humidity"`
+	 Temp float32 `json:"Temp"`
+	 WindSpeed float32 `json:"WindSpeed"`
+	 Brightness float32 `json:Brightness`
 }
 /* End Structs*/
 
@@ -70,8 +70,9 @@ func main() {
 
 func toDatabase(e *entry) string{
 	log.Println("Sending to DB ...")
-	timestamp := string(time.Now().Unix())
-	row := fmt.Sprintf("T:%s, H:%s, WS:%s, BR: %s, Time: %s",
+	timestamp := time.Now().Unix()
+	log.Printf("Time is: %v",timestamp);
+	row := fmt.Sprintf("T:%f, H:%f, WS:%f, BR: %f, Time: %v",
 		e.Temp, e.Humidity, e.WindSpeed, e.Brightness, timestamp)
 	log.Printf("Received: %s\n",row);
 /*

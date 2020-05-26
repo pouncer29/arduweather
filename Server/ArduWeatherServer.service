@@ -6,7 +6,7 @@ Type=simple
 Restart=always
 RestartSec=10
 User=pi
-ExecStart=/home/pi/Projects/arduweather/Server/adwServer 2>> /home/Projects/arduweather/Server/log.txt
+ExecStart=/home/pi/Projects/arduweather/Server/adwServer
 
 
 [Install]

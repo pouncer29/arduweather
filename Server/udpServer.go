@@ -15,11 +15,10 @@ import (
 
 /* Structs */
 type entry struct {
-	 Humidity string `json:"Humidity"`
-	 Temp string `json:"Temp"`
-	 WindSpeed string `json:"WindSpeed"`
-	 WindDir string `json:"WindDir"`
-	 Brightness string `json:Brightness`
+	 Humidity float32 `json:"Humidity"`
+	 Temp float32 `json:"Temp"`
+	 WindSpeed float32 `json:"WindSpeed"`
+	 Brightness float32 `json:Brightness`
 }
 /* End Structs*/
 
@@ -72,9 +71,10 @@ func main() {
 
 func toDatabase(e *entry) string{
 	log.Println("Sending to DB ...")
-	timestamp := string(time.Now().Unix())
-	row := fmt.Sprintf("T:%s, H:%s, WS:%s, WD: %s, BR: %s, Time: %s",
-		e.Temp, e.Humidity, e.WindSpeed, e.WindDir, e.Brightness, timestamp)
+	timestamp := time.Now().Unix()
+	log.Printf("Time: %v",timestamp)
+	row := fmt.Sprintf("T:%f, H:%f, WS:%f, BR: %f, Time: %i",
+		e.Temp, e.Humidity, e.WindSpeed, e.Brightness, timestamp)
 	database, err := sql.Open("sqlite3","../../Databases/weather_data.db")
 	if err != nil {
 		log.Fatal(err.Error())
@@ -91,7 +91,7 @@ func toDatabase(e *entry) string{
 
 	statement, err:= database.Prepare(insertStatement)
 
-	log.Println(row)
+	log.Printf("inserting: %s ",row)
 
 	if err != nil{
 		log.Printf("Statement: %s - %s",insertStatement, "FAILED")
