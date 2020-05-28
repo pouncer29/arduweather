@@ -10,11 +10,11 @@ import (
 )
 
 type entry struct {
-	 Time int64 `json:"time"`
-	 Humidity float32 `json:"humidity"`
-	 Temp float32 `json:"temp"`
-	 WindSpeed float32 `json:"wind_speed"`
-	 WindDir string `json:"wind_dir"`
+	 Time string `json:"Time"`
+	 Humidity string`json:"Humidity"`
+	 Temp string`json:"Temp"`
+	 WindSpeed string`json:"WindSpeed"`
+	 WindDir string `json:"WindDir"`
 }
 
 func random(min, max int) int {
@@ -22,7 +22,6 @@ func random(min, max int) int {
 }
 
 func main() {
-	received:= entry{}
 	fmt.Println("Begin UDP Server");
 	PORT := ":20001"
 	s, err := net.ResolveUDPAddr("udp4", PORT)
@@ -43,18 +42,19 @@ func main() {
 
 	for {
 		n, addr, err := connection.ReadFromUDP(buffer)
-		fmt.Print("-> ", string(buffer[0:n-1]))
+		fromClient := buffer[0:n-1]
+		//fmt.Print("-> ", fromClient)
 
 		if strings.TrimSpace(string(buffer[0:n])) == "STOP" {
 			fmt.Println("Exiting UDP server!")
 			return
 		}
 
+		var newEntry entry
+		json.Unmarshal(fromClient,&newEntry)
+		toDatabase(&newEntry)
+
 		data := []byte(strconv.Itoa(random(1, 1001)))
-
-		json.Unmarshal([]byte(data),&received)
-		toDatabase(&received)
-
 		fmt.Printf("data: %s\n", string(data))
 		_, err = connection.WriteToUDP(data, addr)
 		if err != nil {
@@ -66,8 +66,9 @@ func main() {
 
 func toDatabase(e *entry) string{
 	println("Sending to DB ...")
-	row := fmt.Sprintf("T:%f, H:%f, WS:%f, WD: %s, Time: %s",
-		e.Temp, e.Humidity, e.WindSpeed, e.WindDir, time.Unix(e.Time,0))
+	row := fmt.Sprintf("T:%s, H:%s, WS:%s, WD: %s, Time: %s",
+		e.Temp, e.Humidity, e.WindSpeed, e.WindDir, e.Time)
+	println(row)
 	return  row
 }
 
