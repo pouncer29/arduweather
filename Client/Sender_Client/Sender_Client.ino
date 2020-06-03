@@ -15,7 +15,7 @@
 #include <WiFiNINA.h>
 #include <WiFiUdp.h>
 #include <ArduinoJson.h>
-
+#include "DHT.h"
 
 int status = WL_IDLE_STATUS;
 #include "arduino_secrets.h" 
@@ -24,17 +24,35 @@ char ssid[] = SECRET_SSID;        // your network SSID (name)
 char pass[] = SECRET_PASS;    // your network password (use for WPA, or use as key for WEP)
 int keyIndex = 0;            // your network key Index number (needed only for WEP)
 
+//Sensors
+#define DHTTYPE DHT11   // DHT 11
+#define DHTPIN 2
+DHT dht(DHTPIN, DHTTYPE);
+
+
+//Timing
+unsigned long prevMS_read;
+unsigned long prevMS_send;
+unsigned long sendTime = 60 * 60 * 1000;
+unsigned long readWindSpeedTime = 10;
+float maxWindReading;
+
 unsigned int localPort = 2390;      // local port to listen on
 
 char packetBuffer[255]; //buffer to hold incoming packet
-char  ReplyBuffer[] = "{\"Humidity\": \"36.43\", \"Temp\": \"56.24\", \"WindSpeed\": \"53.63\", \"Brightness\": \"80.74\"}";
-
 
 WiFiUDP Udp;
 
 void setup() {
+  
+  maxWindReading = 0;
+  sendTime  = 2000; // For testing
+  prevMS_send = 0;
+  prevMS_read = 0;
+  
   //Initialize serial and wait for port to open:
   Serial.begin(9600);
+  dht.begin();
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
   }
@@ -71,24 +89,38 @@ void setup() {
 
 
 float getTemperature(){
-  int correction = -4;
+  int correction = 0;
   float reading = analogRead(A0);
   float voltage = reading * 5.0;
   voltage = voltage / 1024.0;
   float temp = (voltage - 0.5) * 100;
-  return temp + correction;
+  temp += correction;
+
+  float tempTwo = dht.readTemperature();
+  //Serial.print("Temperature Readings were:");Serial.print(temp);Serial.print(":");Serial.println(tempTwo);
+  float avgTemp = (temp + tempTwo)/2.0;
+  return avgTemp;
 }
 
 float getHumidity(){
-  return 0;
+  return dht.readHumidity();;
 }
 
 float getBright(){
   return analogRead(A1);
 }
 
+void updateWindSpeed(){
+  float reading = analogRead(A2);
+  //Serial.print("************************Current ");Serial.print(maxWindReading);Serial.print("Reading: ");Serial.println(reading);
+  if(reading > maxWindReading){
+    //Serial.print("************************Replacing: ");Serial.print(maxWindReading);Serial.print("With: ");Serial.println(reading);
+    maxWindReading = reading;
+  }
+}
+
 float getWindSpeed(){
-  return 0;
+  return maxWindReading;
 }
 
 /** Entry Creation */
@@ -103,14 +135,25 @@ StaticJsonDocument<256> createEntry(){
   entry["Humidity"] = humidity;
   entry["Brightness"] = brightness;
   entry["WindSpeed"] = windSpeed;
-
+  
   return entry;
 }
 
 void loop() {
+  
+  //Serial.println("Looping");
 
-  Serial.println("Looping");
- 
+  unsigned long currentMS = millis();
+  unsigned long elapsed_readSpeed = currentMS - prevMS_read;
+  unsigned long elapsed_sendData = currentMS - prevMS_send;
+  
+  if(elapsed_readSpeed > readWindSpeedTime){
+    //Serial.println("updating");
+    updateWindSpeed();
+    prevMS_read = currentMS;
+  } else if (elapsed_sendData > sendTime){
+    //Serial.println("Sending details");
+    
     IPAddress remoteIP(172,16,1,68);
     Serial.print(remoteIP);
     Serial.println(20001);
@@ -124,10 +167,11 @@ void loop() {
     serializeJson(doc,Udp);
     Udp.println();
     Udp.endPacket();
-
-    uint64_t delayTime = 60UL * 60UL * 1000UL;
-    //Serial.print("DelayTime:");Serial.println(delayTime);
-    delay(delayTime);
+    prevMS_send = currentMS;
+    maxWindReading  = 0;
+  }
+  //Serial.print("Elapsed:");Serial.println(elapsed);
+  
   
 }
 
