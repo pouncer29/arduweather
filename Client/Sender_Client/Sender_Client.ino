@@ -33,8 +33,9 @@ DHT dht(DHTPIN, DHTTYPE);
 //Timing
 unsigned long prevMS_read;
 unsigned long prevMS_send;
-unsigned long sendTime = 60 * 60 * 1000;
-unsigned long readWindSpeedTime = 10;
+unsigned long sendTime;
+unsigned long readWindSpeedTime = 10UL;
+bool initialRun;
 float maxWindReading;
 
 unsigned int localPort = 2390;      // local port to listen on
@@ -46,10 +47,10 @@ WiFiUDP Udp;
 void setup() {
   
   maxWindReading = 0;
-  sendTime  = 2000; // For testing
+  //sendTime = 60UL * 10000UL;
+  sendTime = 30000UL;
   prevMS_send = 0;
-  prevMS_read = 0;
-  
+  prevMS_read = 0;  
   //Initialize serial and wait for port to open:
   Serial.begin(9600);
   dht.begin();
@@ -83,6 +84,7 @@ void setup() {
   printWifiStatus();
 
   Serial.println("\nStarting connection to server...");
+  Serial.print("Send interval is:");Serial.print(sendTime);Serial.println(" ms");
   // if you get a connection, report back via serial:
   Udp.begin(localPort);
 }
@@ -97,7 +99,7 @@ float getTemperature(){
   temp += correction;
 
   float tempTwo = dht.readTemperature();
-  //Serial.print("Temperature Readings were:");Serial.print(temp);Serial.print(":");Serial.println(tempTwo);
+  Serial.print("Temperature Readings were:");Serial.print(temp);Serial.print(":");Serial.println(tempTwo);
   float avgTemp = (temp + tempTwo)/2.0;
   return avgTemp;
 }
@@ -154,7 +156,7 @@ void loop() {
   } else if (elapsed_sendData > sendTime){
     //Serial.println("Sending details");
     
-    IPAddress remoteIP(172,16,1,68);
+    IPAddress remoteIP(172,16,1,69);
     Serial.print(remoteIP);
     Serial.println(20001);
 
@@ -169,6 +171,9 @@ void loop() {
     Udp.endPacket();
     prevMS_send = currentMS;
     maxWindReading  = 0;
+  }
+  if(initialRun){
+    initialRun=false;
   }
   //Serial.print("Elapsed:");Serial.println(elapsed);
   
