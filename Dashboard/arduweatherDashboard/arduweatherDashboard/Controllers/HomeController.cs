@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Microsoft.Data.Sqlite;
 using System.Web.Mvc;
+using System.Web.UI.WebControls.WebParts;
 
 namespace arduweatherDashboard.Controllers
 {
@@ -15,7 +17,8 @@ namespace arduweatherDashboard.Controllers
 
         public ActionResult About()
         {
-            ViewBag.Message = "Your application description page.";
+            ViewBag.Message = "arduweather Dashboard";
+            ViewBag.Boogers = "I am a booger";
             return View();
         }
 
