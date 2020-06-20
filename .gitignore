@@ -28,6 +28,7 @@
 
 # C#
 *.cache
+*.idea
 
 # Executables
 *.exe
