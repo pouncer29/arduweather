@@ -69,26 +69,6 @@ func main() {
 	}
 }
 
-func dbInit() {
-	_,err := os.Stat("../Database/arduweather.db");
-	exists := err == nil;
-	if(exists){
-		return;
-	} else {
-		file, err := os.Create("../Database/arduweather.db");
-		if (err != nil){
-			log.Fatal(err.Error());
-		}
-		file.close();
-		log.Println("Created db file at ../Database/arduweather.db");
-		log.Println("Initializing DB...");
-		log.Println("Not really. We need to Create all the tables and the triggers");
-}
-
-
-/*
-Creates an entry statement insertion out of the entry payload
-*/
 func toDatabase(e *entry) string{
 	log.Println("Sending to DB ...")
 	timestamp := time.Now().Unix()

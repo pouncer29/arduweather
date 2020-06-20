@@ -2,8 +2,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "arduweatherDashboard", "arduweatherDashboard\arduweatherDashboard.csproj", "{2E1BDA7E-F0C0-49CC-B7F6-FD3AB845E8FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConsole", "TestConsole\TestConsole.csproj", "{E1B6CB5F-35DA-4CC8-B377-742D4B9F85BF}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -14,9 +12,5 @@ Global
 		{2E1BDA7E-F0C0-49CC-B7F6-FD3AB845E8FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E1BDA7E-F0C0-49CC-B7F6-FD3AB845E8FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E1BDA7E-F0C0-49CC-B7F6-FD3AB845E8FC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E1B6CB5F-35DA-4CC8-B377-742D4B9F85BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E1B6CB5F-35DA-4CC8-B377-742D4B9F85BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E1B6CB5F-35DA-4CC8-B377-742D4B9F85BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E1B6CB5F-35DA-4CC8-B377-742D4B9F85BF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

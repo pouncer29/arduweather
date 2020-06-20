@@ -26,6 +26,9 @@
 *.a
 *.lib
 
+# C#
+*.cache
+
 # Executables
 *.exe
 *.out
