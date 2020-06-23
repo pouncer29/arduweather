@@ -1,4 +1,6 @@
-﻿using System.Threading;
+﻿using System;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using DBMan;
 
 namespace DBTester
@@ -7,7 +9,9 @@ namespace DBTester
     {
         public static void Main(string[] args)
         {
-            var DBMan = new DBManager_Sqlite();
+            var dbman = new DBManager_Mongo();
+            Console.WriteLine($"Last Entry: {dbman.LatestTimestamp}:{dbman.LatestTemperature}");
+            Console.Read();
         }
     }
 }

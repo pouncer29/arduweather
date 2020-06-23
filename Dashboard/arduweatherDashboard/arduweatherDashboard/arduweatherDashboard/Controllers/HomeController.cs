@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using DBMan;
 
 namespace arduweatherDashboard.Controllers
 {
@@ -10,6 +11,9 @@ namespace arduweatherDashboard.Controllers
     {
         public ActionResult Index()
         {
+            var dbMan = new DBManager_Mongo();
+            ViewBag.Timestamp = dbMan.LatestTimestamp;
+            ViewBag.Temperature = dbMan.LatestTemperature;
             return View();
         }
 

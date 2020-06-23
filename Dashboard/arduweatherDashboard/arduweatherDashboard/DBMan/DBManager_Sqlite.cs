@@ -2,19 +2,18 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Timers;
-using SQLitePCL;
 using Microsoft.Data.Sqlite;
-
+using Microsoft.EntityFrameworkCore.Sqlite;
 namespace DBMan 
 {
-    public class DBManager_Sqlite
+    public class DBManager_Sqlite :IDBManager
     {
         private string dbPath = string.Empty;
         private Dictionary<string,string> lastEntry;
         private Timer grabEntryTimer;
         public DBManager_Sqlite()
         {
-            dbPath = "/Users/FrankyB/fGrams/Projects/Databases/weather_data.db";
+            dbPath = "/Users/FrankyB/fGrams/Projects/arduweather/Databases/weather_data.db";
             var timeInterval = 1000 * 60 * 60;
             timeInterval = 1000 * 60 * 13;
             grabEntryTimer = new Timer(timeInterval);
@@ -67,7 +66,16 @@ namespace DBMan
             }
         }
 
-        private Dictionary<string, string> getLatestEntry()
+        public string lastEntryString
+        {
+            get
+            {
+                return $"{this.getTime(LatestTimestamp)}:\n" +
+                       $"Temp: {LatestTemp}, Humid: {LatestHumidity} WindS: {LatestWindSpeed}\n";
+            }
+        }
+
+        public Dictionary<string, string> getLatestEntry()
         {
             var dict = new Dictionary<string, string>()
             {
@@ -77,8 +85,8 @@ namespace DBMan
                 {"Brightness","N/A"},
                 {"Timestamp", "N/A"}
             };
-            //TODO: put at timer on and refressh this dict
-            using (var db = new SqliteConnection($"Data Source = {this.dbPath}"))
+            //TODO: put at timer on and refresh this dict
+            using (var db = new SqliteConnection($"Data Source = {this.dbPath}Version = 3;"))
             {
                 db.Open();
                 var command = db.CreateCommand();
@@ -110,7 +118,7 @@ namespace DBMan
             return dict;
         }
         
-        private string getTime(string timestampString)
+        public string getTime(string timestampString)
         {
             double unixTimestamp = double.Parse(timestampString);
             DateTime dtDateTime = new DateTime(1970,1,1,0,0,0,0,System.DateTimeKind.Utc);
