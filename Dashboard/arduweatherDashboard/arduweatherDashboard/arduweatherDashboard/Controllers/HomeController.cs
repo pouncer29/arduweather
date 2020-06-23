@@ -14,6 +14,8 @@ namespace arduweatherDashboard.Controllers
             var dbMan = new DBManager_Mongo();
             ViewBag.Timestamp = dbMan.LatestTimestamp;
             ViewBag.Temperature = dbMan.LatestTemperature;
+            ViewBag.Humidity = dbMan.LatestTemperature;
+            ViewBag.Summary = dbMan.SummaryString();
             return View();
         }
 

@@ -1,11 +1,15 @@
+using System;
 using System.Collections.Generic;
+using DBConstants;
+using Microsoft.Win32;
 
 namespace DBMan
 {
     public interface IDBManager
     {
-        Dictionary<string, string> getLatestEntry();
-
-        string getTime(string timestampString);
+        event EventHandler<EventArgs> NewEntry;
+        Dictionary<DataPoint, string> GetLatestEntry();
+        string GetTime(string timestampString);
+        string SummaryString();
     }
 }

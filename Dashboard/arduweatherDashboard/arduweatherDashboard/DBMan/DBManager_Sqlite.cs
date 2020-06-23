@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Timers;
+using DBConstants;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore.Sqlite;
 namespace DBMan 
@@ -9,7 +10,7 @@ namespace DBMan
     public class DBManager_Sqlite :IDBManager
     {
         private string dbPath = string.Empty;
-        private Dictionary<string,string> lastEntry;
+        private Dictionary<DataPoint,string> lastEntry;
         private Timer grabEntryTimer;
         public DBManager_Sqlite()
         {
@@ -18,19 +19,19 @@ namespace DBMan
             timeInterval = 1000 * 60 * 13;
             grabEntryTimer = new Timer(timeInterval);
             grabEntryTimer.Elapsed += this.pullLatest;
-            lastEntry = getLatestEntry();
+            lastEntry = GetLatestEntry();
         }
 
         private void pullLatest(object sender, ElapsedEventArgs e)
         {
-            this.lastEntry = getLatestEntry();
+            this.lastEntry = GetLatestEntry();
         }
 
         public string LatestTemp
         {
             get
             {
-                return lastEntry["Temp"];
+                return lastEntry[DataPoint.temperature];
             }
         }
 
@@ -38,7 +39,7 @@ namespace DBMan
         {
             get
             {
-                return lastEntry["Humidity"];
+                return lastEntry[DataPoint.humidity];
             }
         }
 
@@ -46,7 +47,7 @@ namespace DBMan
         {
             get
             {
-                return lastEntry["WindSpeed"];
+                return lastEntry[DataPoint.windSpeed];
             }
         }
 
@@ -54,7 +55,7 @@ namespace DBMan
         {
             get
             {
-                return lastEntry["Brightness"];
+                return lastEntry[DataPoint.brightness];
             }
         }
 
@@ -62,7 +63,7 @@ namespace DBMan
         {
             get
             {
-                return lastEntry["Timestamp"];
+                return lastEntry[DataPoint.timestamp];
             }
         }
 
@@ -70,20 +71,23 @@ namespace DBMan
         {
             get
             {
-                return $"{this.getTime(LatestTimestamp)}:\n" +
+                return $"{this.GetTime(LatestTimestamp)}:\n" +
                        $"Temp: {LatestTemp}, Humid: {LatestHumidity} WindS: {LatestWindSpeed}\n";
             }
         }
 
-        public Dictionary<string, string> getLatestEntry()
+        public event EventHandler<EventArgs> NewEntry;
+
+        public Dictionary<DataPoint, string> GetLatestEntry()
         {
-            var dict = new Dictionary<string, string>()
+            var dict = new Dictionary<DataPoint, string>()
             {
-                {"Temp", "N/A"},
-                {"Humidity", "N/A"},
-                {"WindSpeed", "N/A"},
-                {"Brightness","N/A"},
-                {"Timestamp", "N/A"}
+                {DataPoint.brightness, "N/A"},
+                {DataPoint.humidity, "N/A"},
+                {DataPoint.temperature, "N/A"},
+                {DataPoint.windDirection,"N/A"},
+                {DataPoint.windSpeed, "N/A"},
+                {DataPoint.timestamp, "N/A"}
             };
             //TODO: put at timer on and refresh this dict
             using (var db = new SqliteConnection($"Data Source = {this.dbPath}Version = 3;"))
@@ -103,12 +107,12 @@ namespace DBMan
                 {
                     while (reader.Read())
                     {
-                        dict["Timestamp"] = this.getTime(reader.GetString(0));
-                        dict["Temp"] = reader.GetString(1);
-                        dict["Humidity"] = reader.GetString(2);
-                        dict["WindDir"] = reader.GetString(3);
-                        dict["WindSpeed"] = reader.GetString(4);
-                        dict["Brightness"] = reader.GetString(5);
+                        dict[DataPoint.timestamp] = this.GetTime(reader.GetString(0));
+                        dict[DataPoint.temperature] = reader.GetString(1);
+                        dict[DataPoint.humidity] = reader.GetString(2);
+                        dict[DataPoint.windDirection] = reader.GetString(3);
+                        dict[DataPoint.windSpeed] = reader.GetString(4);
+                        dict[DataPoint.brightness] = reader.GetString(5);
                         
                     }
                 }
@@ -117,14 +121,17 @@ namespace DBMan
             
             return dict;
         }
-        
-        public string getTime(string timestampString)
+        public string GetTime(string timestampString)
         {
             double unixTimestamp = double.Parse(timestampString);
             DateTime dtDateTime = new DateTime(1970,1,1,0,0,0,0,System.DateTimeKind.Utc);
             dtDateTime = dtDateTime.AddSeconds( unixTimestamp ).ToLocalTime();
             return dtDateTime.ToString();
         }
-        
+
+        public string SummaryString()
+        {
+            return this.lastEntryString;
+        }
     }
 }

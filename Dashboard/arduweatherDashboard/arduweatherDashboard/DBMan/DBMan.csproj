@@ -209,6 +209,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataPoints.cs" />
     <Compile Include="DBManager_Mongo.cs" />
     <Compile Include="DBManager_Sqlite.cs" />
     <Compile Include="IDBManager.cs" />
