@@ -24,8 +24,8 @@ namespace DBConstants
         public static readonly string WindDirectionKey = "WindDir";
         public static readonly string WindSpeedKey = "WindSpeed";
         public static readonly string BrightnessKey = "Brightness";
-        public static readonly string DBName = "adwdb";
-        public static readonly string LiveKey= "LIVE_WEATHER_DATA";
+        public static readonly string DBName = "TestDB"; //adwdb
+        public static readonly string LiveKey= "TestCollection"; //LIVE_WEATHER_DATA
         public static readonly string ArchiveKey= "ARCHIVED_WEATHER_DATA";
         public static readonly string ConnectionString = "mongodb://127.0.0.1:27017";
         public static readonly double pollTime = 0.05;

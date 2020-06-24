@@ -27,7 +27,7 @@ namespace DBMan
             this.lastEntry = GetLatestEntry();
         }
 
-        public string LatestTemp
+        public string LatestTemperature
         {
             get
             {
@@ -67,12 +67,29 @@ namespace DBMan
             }
         }
 
+        public string LatestTimestampFriendly
+        {
+            get
+            {
+                return GetTime(LatestTimestamp);
+            }
+        }
+
+        public string LatestWindDir
+        {
+            get
+            {
+                return lastEntry[DataPoint.windDirection];
+            }
+        }
+
+
         public string lastEntryString
         {
             get
             {
                 return $"{this.GetTime(LatestTimestamp)}:\n" +
-                       $"Temp: {LatestTemp}, Humid: {LatestHumidity} WindS: {LatestWindSpeed}\n";
+                       $"Temp: {LatestTemperature}, Humid: {LatestHumidity} WindS: {LatestWindSpeed}\n";
             }
         }
 

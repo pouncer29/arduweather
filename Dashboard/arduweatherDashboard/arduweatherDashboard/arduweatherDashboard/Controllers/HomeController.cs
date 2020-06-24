@@ -9,9 +9,33 @@ namespace arduweatherDashboard.Controllers
 {
     public class HomeController : Controller
     {
+        private IDBManager dbMan;
+        public HomeController() : base()
+        {
+            dbMan = new DBManager_Mongo();
+            dbMan.NewEntry += this.callViewDeets;
+        }
+
+        private void callViewDeets(object sender, EventArgs e)
+        {
+            this.UpdateViewDeets();
+        }
+
+        [HttpPost]
+        public ActionResult UpdateViewDeets()
+        {
+             ViewBag.Timestamp = dbMan.LatestTimestamp;
+             ViewBag.Temperature = dbMan.LatestTemperature;
+             ViewBag.Humidity = dbMan.LatestTemperature;
+             ViewBag.Summary = dbMan.SummaryString();
+             return PartialView("Index");
+
+        }
+
+        [HttpGet]
         public ActionResult Index()
         {
-            var dbMan = new DBManager_Mongo();
+            //var dbMan = new DBManager_Mongo();
             ViewBag.Timestamp = dbMan.LatestTimestamp;
             ViewBag.Temperature = dbMan.LatestTemperature;
             ViewBag.Humidity = dbMan.LatestTemperature;

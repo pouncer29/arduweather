@@ -26,7 +26,8 @@ namespace DBMan
             mongoClient = new MongoClient(DBDeets.ConnectionString);
             weatherDB = mongoClient.GetDatabase(DBDeets.DBName);
             PollTimer = new Timer();
-            PollTimer.Interval = TimeSpan.FromHours(0.57).TotalMilliseconds;
+            PollTimer.Interval = TimeSpan.FromSeconds(15).TotalMilliseconds;
+            //PollTimer.Interval = TimeSpan.FromHours(DBDeets.pollTime).TotalMilliseconds;
             this.latestEntry = new Dictionary<DataPoint, string>()
             {
                 {DataPoint.timestamp, string.Empty},
@@ -37,16 +38,24 @@ namespace DBMan
                 {DataPoint.windDirection, string.Empty},
             };
             this.GetLatestEntry();
+            PollTimer.Start();
+            PollTimer.AutoReset = true;
             PollTimer.Elapsed += pollTimerElapsed;
         }
+        
 
         private void pollTimerElapsed(object sender, ElapsedEventArgs e)
         {
             var oldTimestamp = double.Parse(this.LatestTimestamp);
-            this.GetLatestEntry();
+            //this.GetLatestEntry();
             var newTimestamp = double.Parse(this.LatestTimestamp);
 
-            if (oldTimestamp > newTimestamp)
+            var oldWindDir = this.LatestWindDir;
+            this.GetLatestEntry();
+            var newWindDir = this.LatestWindDir;
+
+            //if (oldTimestamp > newTimestamp)
+            if(oldWindDir != newWindDir)
             {
                 this.NewEntry?.Invoke(this,new EventArgs());
             }
@@ -124,7 +133,7 @@ namespace DBMan
             }
             var collection = weatherDB.GetCollection<BsonDocument>(DBDeets.LiveKey);
             var filter = Builders<BsonDocument>.Filter.Empty;
-            var result = collection.Find(filter).ToList().FirstOrDefault();
+            var result = collection.Find(filter).Sort((Builders<BsonDocument>.Sort.Descending("Timestamp"))).FirstOrDefault();
             
             //Populate dictionary
             latestEntry[DataPoint.timestamp] = result[DBDeets.TimeKey].ToString();

@@ -7,6 +7,41 @@ namespace DBMan
 {
     public interface IDBManager
     {
+        string LatestTemperature
+        {
+            get;
+        }
+
+        string LatestHumidity
+        {
+            get;
+        }
+
+        string LatestBrightness
+        {
+            get;
+        }
+
+        string LatestWindSpeed
+        {
+            get;
+        }
+
+        string LatestWindDir
+        {
+            get;
+        }
+
+        string LatestTimestamp
+        {
+            get;
+        }
+
+        string LatestTimestampFriendly
+        {
+            get;
+        }
+        
         event EventHandler<EventArgs> NewEntry;
         Dictionary<DataPoint, string> GetLatestEntry();
         string GetTime(string timestampString);
