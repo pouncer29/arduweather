@@ -24,12 +24,14 @@ namespace arduweatherDashboard.Controllers
         [HttpPost]
         public ActionResult UpdateViewDeets()
         {
-             ViewBag.Timestamp = dbMan.LatestTimestamp;
-             ViewBag.Temperature = dbMan.LatestTemperature;
-             ViewBag.Humidity = dbMan.LatestTemperature;
-             ViewBag.Summary = dbMan.SummaryString();
-             return PartialView("Index");
-
+            ViewBag.Timestamp = dbMan.LatestTimestamp;
+            ViewBag.Temperature = dbMan.LatestTemperature;
+            ViewBag.Humidity = dbMan.LatestTemperature;
+            ViewBag.Brightness = dbMan.LatestBrightness;
+            ViewBag.WindSpeed = dbMan.LatestWindSpeed;
+            ViewBag.WindDir = dbMan.LatestWindDir;
+            ViewBag.Timestamp = dbMan.LatestTimestampFriendly;
+            return PartialView("Index");
         }
 
         [HttpGet]
@@ -39,7 +41,10 @@ namespace arduweatherDashboard.Controllers
             ViewBag.Timestamp = dbMan.LatestTimestamp;
             ViewBag.Temperature = dbMan.LatestTemperature;
             ViewBag.Humidity = dbMan.LatestTemperature;
-            ViewBag.Summary = dbMan.SummaryString();
+            ViewBag.Brightness = dbMan.LatestBrightness;
+            ViewBag.WindSpeed = dbMan.LatestWindSpeed;
+            ViewBag.WindDir = dbMan.LatestWindDir;
+            ViewBag.Timestamp = dbMan.LatestTimestampFriendly;
             return View();
         }
 
