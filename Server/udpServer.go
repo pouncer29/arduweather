@@ -2,23 +2,25 @@ package main
 import (
 	"encoding/json"
 	"math/rand"
-	"database/sql"
 	"fmt"
 	"log"
 	"net"
 	"strconv"
 	"strings"
 	"time"
-
-	_ "github.com/mattn/go-sqlite3"
+	"context"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 /* Structs */
 type entry struct {
 	 Humidity float32 `json:"Humidity"`
 	 Temp float32 `json:"Temp"`
-	 WindSpeed float32 `json:"WindSpeed"`
 	 Brightness float32 `json:Brightness`
+	 WindSpeed float32 `json:"WindSpeed"`
+	 WindDir string `json:"WindDir"`
 }
 /* End Structs*/
 
@@ -75,36 +77,37 @@ func toDatabase(e *entry) string{
 	log.Printf("Time: %v",timestamp)
 	row := fmt.Sprintf("T:%f, H:%f, WS:%f, BR: %f, Time: %i",
 		e.Temp, e.Humidity, e.WindSpeed, e.Brightness, timestamp)
-	database, err := sql.Open("sqlite3","../../Databases/weather_data.db")
-	if err != nil {
-		log.Fatal(err.Error())
-	}
 
-	insertStatement := `INSERT INTO LIVE_WEATHER_DATA(
-						Timestamp,
-						Temperature,
-						Humidity,
-						Wind_Speed,
-						Brightness
-						)
-						Values (?,?,?,?,?);`
-
-	statement, err:= database.Prepare(insertStatement)
-
-	log.Printf("inserting: %s ",row)
-
+	client,err := mongo.NewClient(options.Client().ApplyURI("mongodb://127.0.0.1:27017"))
 	if err != nil{
-		log.Printf("Statement: %s - %s",insertStatement, "FAILED")
+		log.Fatal(err)
 	}
-
-	_, err = statement.Exec(timestamp,e.Temp,e.Humidity,e.WindSpeed,e.Brightness)
-
+	ctx, _ := context.WithTimeout(context.Background(),10*time.Second)
+	err = client.Connect(ctx)
 	if err != nil{
-		log.Printf("******* SOMETHING WENT WRONG WITH EXEC *****")
-		log.Printf(err.Error());
+		log.Fatal(err)
+	}
+	defer client.Disconnect(ctx)
+
+	//Grab Collection
+	adwdb := client.Database("TestDB")
+	liveWeatherCollection := adwdb.Collection("TestCollection")
+
+	entryResult,err:= liveWeatherCollection.InsertOne(ctx, bson.D{
+		{Key:"Timestamp",Value:timestamp},
+		{Key:"TEMPERATURE",Value:e.Temp},
+		{Key:"Humidity",Value:e.Humidity},
+		{Key:"Brightness",Value:e.Brightness},
+		{Key:"WindSpeed",Value:e.WindSpeed},
+		{Key:"WindDir",Value:e.WindDir},
+		})
+
+	if(err != nil){
+		log.Fatal(err)
+	} else {
+		log.Printf("Inserted %v: %s\n",entryResult.InsertedID,row);
 	}
 
-	database.Close();
 	return  row
 }
 

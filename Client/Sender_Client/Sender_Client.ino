@@ -137,6 +137,7 @@ StaticJsonDocument<256> createEntry(){
   entry["Humidity"] = humidity;
   entry["Brightness"] = brightness;
   entry["WindSpeed"] = windSpeed;
+  entry["WindDir"] = "N/A";
   
   return entry;
 }
@@ -156,7 +157,7 @@ void loop() {
   } else if (elapsed_sendData > sendTime){
     //Serial.println("Sending details");
     
-    IPAddress remoteIP(172,16,1,69);
+    IPAddress remoteIP(172,16,1,74);
     Serial.print(remoteIP);
     Serial.println(20001);
 
