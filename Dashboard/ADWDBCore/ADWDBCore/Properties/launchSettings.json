@@ -22,6 +22,14 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
+    },
+    "ADWDBCore_gurgi": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "applicationUrl": "https://172.16.1.69:5001;http://172.16.1.69:5000",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
     }
   }
 }
