@@ -1,0 +1,27 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<div class="jumbotron">
+    <h1>What Is the Weather Like On The Deck?</h1>
+    <h3>&#64</h3>
+    <h3>@ViewBag.Timestamp</h3>
+</div>
+<div class="row">
+    <h4>Temperature: @ViewBag.Temperature&#186C</h4>
+</div>
+
+<div class="row">
+    <h4>Humidity: @ViewBag.Humidity</h4>
+</div>
+
+<div class="row">
+    <h4>Brightness: @ViewBag.Brightness &#9728</h4>
+</div>
+<div class="row">
+    <h4>Wind Speed: @ViewBag.WindSpeed -> @ViewBag.WindDir</h4> 
+</div>
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
