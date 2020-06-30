@@ -59,6 +59,7 @@ func main() {
 		var newEntry entry
 		data := []byte(strconv.Itoa(random(1, 1001)))
 
+		log.Printf("data: %s\n", string(data))
 		json.Unmarshal(fromClient, &newEntry)
 		toDatabase(&newEntry)
 
@@ -77,12 +78,13 @@ func toDatabase(e *entry) string{
 	log.Printf("Time: %v",timestamp)
 	row := fmt.Sprintf("T:%f, H:%f, WS:%f, BR: %f, Time: %i",
 		e.Temp, e.Humidity, e.WindSpeed, e.Brightness, timestamp)
+	log.Printf("Received %s\n",row);
 
-	client,err := mongo.NewClient(options.Client().ApplyURI("mongodb://127.0.0.1:27017"))
+	client,err := mongo.NewClient(options.Client().ApplyURI("mongodb://127.0.0.1:27017/"))
 	if err != nil{
 		log.Fatal(err)
 	}
-	ctx, _ := context.WithTimeout(context.Background(),10*time.Second)
+	ctx, _ := context.WithTimeout(context.Background(),30*time.Second)
 	err = client.Connect(ctx)
 	if err != nil{
 		log.Fatal(err)
