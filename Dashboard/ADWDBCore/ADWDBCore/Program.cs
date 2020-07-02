@@ -20,7 +20,8 @@ namespace ADWDBCore
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder => { 
 			webBuilder.UseStartup<Startup>()
-			.UseUrls("https://172.16.1.69:5001");
+			//.UseUrls("https://172.16.1.74:5001");
+			.UseUrls("https://localhost:5001");
 			});
     }
 }
