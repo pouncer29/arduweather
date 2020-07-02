@@ -101,7 +101,7 @@ float getTemperature(){
   float tempTwo = dht.readTemperature();
   Serial.print("Temperature Readings were:");Serial.print(temp);Serial.print(":");Serial.println(tempTwo);
   float avgTemp = (temp + tempTwo)/2.0;
-  return avgTemp;
+  return tempTwo;
 }
 
 float getHumidity(){

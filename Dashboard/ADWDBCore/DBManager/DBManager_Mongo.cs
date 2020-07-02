@@ -46,15 +46,14 @@ namespace DBMan
         private void pollTimerElapsed(object sender, ElapsedEventArgs e)
         {
             var oldTimestamp = double.Parse(this.LatestTimestamp);
-            //this.GetLatestEntry();
+            this.GetLatestEntry();
             var newTimestamp = double.Parse(this.LatestTimestamp);
 
-            var oldWindDir = this.LatestWindDir;
-            this.GetLatestEntry();
-            var newWindDir = this.LatestWindDir;
+//            var oldWindDir = this.LatestWindDir;
+//            this.GetLatestEntry();
+ //           var newWindDir = this.LatestWindDir;
 
-            //if (oldTimestamp > newTimestamp)
-            if(oldWindDir != newWindDir)
+            if (oldTimestamp > newTimestamp)
             {
                 this.NewEntry?.Invoke(this,new EventArgs());
             }
@@ -119,6 +118,31 @@ namespace DBMan
         }
         #endregion Data Points
 
+        #region  Chart Helpers
+
+        /// <summary>
+        /// For the google charts Api. Should return a list of lists in the form
+        /// [
+        /// [<time>,<query ItemA>,<queryItemB>],
+        /// [<time>,<query ItemA>,<queryItemB>],
+        /// ...
+        /// ]
+        /// </summary>
+        /// <returns>a google charts string</returns>
+        public string GetWeeklyChart()
+        {
+            var weekChartString = string.Empty;
+
+            var maxTime = new DateTimeOffset(DateTime.Today,TimeSpan.Zero).ToUnixTimeSeconds();
+            var pastSevenDays = DateTime.Today.AddDays(-7);
+            var minTime = new DateTimeOffset(pastSevenDays,TimeSpan.Zero).ToUnixTimeSeconds();
+            //we need to create an entry doc.            
+            
+            return weekChartString;
+        }
+        
+
+        #endregion Chart Helpers
 
         /// <summary>
         /// Retrieve the last entry from the database
