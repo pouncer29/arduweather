@@ -44,7 +44,7 @@ namespace DBMan
         
         event EventHandler<EventArgs> NewEntry;
         Dictionary<DataPoint, string> GetLatestEntry();
-        string GetTime(string timestampString);
+        string GetTime(string timestampString,string format="");
         string SummaryString();
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Timers;
 using DBConstants;
+using DBManager.JsonHelpers;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
@@ -223,7 +224,7 @@ namespace DBMan
         /// </summary>
         /// <param name="days">days to go back</param>
         /// <returns></returns>
-        public string GetPastNDaysChart(int days,DataPoint fields= DataPoint.all)
+        public List<object> GetPastNDaysChart(int days,DataPoint fields= DataPoint.all)
         {
             if (days < 0)
             {
@@ -251,9 +252,11 @@ namespace DBMan
              
              var collection = weatherDB.GetCollection<BsonDocument>(DBDeets.LiveKey);
              var results = collection.Find(rangeFilter).ToList();
-             pastNString = results.ToString();
-             return pastNString;   
+
+             return this.weatherChartData(results, DataPoint.all);
+
         }
+        
 
         /// <summary>
         /// var data = google.visualization.arrayToDataTable([
@@ -267,9 +270,36 @@ namespace DBMan
         /// <param name="docs"></param>
         /// <param name="fields"></param>
         /// <returns></returns>
-        public string weatherChartData(List<BsonDocument> docs,DataPoint fields=DataPoint.all)
+        private List <object> weatherChartData(List<BsonDocument> docs,DataPoint fields=DataPoint.all)
         {
-            return @"['Time', 'Temperature', 'Humidity'],['2004',  1000, 400],['2005',  1170, 460]";
+            var weatherData = new List<WeatherEntry>();
+            
+            if (fields == DataPoint.all)
+            {
+               docs.ForEach(doc =>
+               {
+                   weatherData.Add(new WeatherEntry(this.GetTime(doc[DBDeets.TimeKey].ToString()))
+                   {
+                       TEMPERATURE = double.Parse(doc[DBDeets.TemperatureKey].ToString()),
+                       Humidity= double.Parse(doc[DBDeets.HumidityKey].ToString()),
+                       Brightness= double.Parse(doc[DBDeets.BrightnessKey].ToString()),
+                       WindSpeed= double.Parse(doc[DBDeets.WindSpeedKey].ToString()),
+                       WindDir = doc[DBDeets.WindDirectionKey].ToString()
+                   });
+               }); 
+            } else if (fields == DataPoint.temperature){
+                docs.ForEach(doc =>
+                {
+                    weatherData.Add(new WeatherEntry(this.GetTime(doc[DBDeets.TimeKey].ToString(),"d"))
+                    {
+                        TEMPERATURE = double.Parse(doc[DBDeets.TemperatureKey].ToString()),
+                        WindDir = doc[DBDeets.WindDirectionKey].ToString()
+                    });
+                });                
+            }
+
+            var chart = Weather_Chart.ToGChartsArray(weatherData,fields);
+            return chart;
         }
         
         #endregion Chart Helpers
@@ -304,12 +334,12 @@ namespace DBMan
         /// </summary>
         /// <param name="timestampString">the string representation of a unix timestamp</param>
         /// <returns></returns>
-        public string GetTime(string timestampString)
+        public string GetTime(string timestampString,string format="")
         {
             double unixTimestamp = double.Parse(timestampString);
             DateTime dtDateTime = new DateTime(1970,1,1,0,0,0,0,System.DateTimeKind.Utc);
             dtDateTime = dtDateTime.AddSeconds( unixTimestamp ).ToLocalTime();
-            return dtDateTime.ToString();
+            return dtDateTime.ToString(format);
         }
 
         /// <summary>

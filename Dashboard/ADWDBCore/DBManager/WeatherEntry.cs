@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using DBConstants;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Newtonsoft.Json;
@@ -18,10 +19,10 @@ namespace DBManager.JsonHelpers
     public class WeatherEntry
     {
        public string Timestamp { get; set; } 
-       public double? TEMPERATURE { get; set; } 
-       public double? Humidity { get; set; } 
-       public double? Brightness { get; set; }
-       public double? WindSpeed { get; set; }
+       public double TEMPERATURE { get; set; } 
+       public double Humidity { get; set; } 
+       public double Brightness { get; set; }
+       public double WindSpeed { get; set; }
        public string WindDir { get; set; }
 
        public WeatherEntry(string timestamp)
@@ -29,8 +30,8 @@ namespace DBManager.JsonHelpers
            this.Timestamp = timestamp;
        }
 
-       public WeatherEntry(string timestamp, double? temp = null, double? humid = null, double? brightness = null,
-           double? windSpeed = null, string windDir = null):this(timestamp)
+       public WeatherEntry(string timestamp, double temp = 0, double humid = 0, double brightness = 0,
+           double windSpeed = 0, string windDir = null):this(timestamp)
        {
            this.Timestamp = timestamp;
            this.TEMPERATURE = temp;
@@ -45,7 +46,7 @@ namespace DBManager.JsonHelpers
        /// </summary>
        /// <returns></returns>
        /// <exception cref="InvalidOperationException"></exception>
-       public List<object> GetDataValues()
+       public List<object> GetDataValues(DataPoint fields = DataPoint.all)
        {
             var deets = new List<object>();
             if (string.IsNullOrEmpty(this.Timestamp))
@@ -53,27 +54,24 @@ namespace DBManager.JsonHelpers
                 throw new InvalidOperationException("Cannot create chart without timestamp");
             }
             deets.Add(Timestamp);
- 
-            if (this.TEMPERATURE != null)
+            if (fields == DataPoint.all)
             {
                 deets.Add(this.TEMPERATURE);
-            }
- 
-            if (this.Humidity != null)
-            {
                 deets.Add(this.Humidity); 
-            }
- 
-            if (this.WindSpeed != null)
-            {
                 deets.Add(this.WindSpeed);
-            }
- 
-            if (this.Brightness != null)
-            {
                 deets.Add(this.Brightness);
+                
+            } else if (fields == DataPoint.temperature) {
+                deets.Add(this.TEMPERATURE);
+            } else if (fields == DataPoint.humidity) {
+                deets.Add(this.Humidity);
+            } else if (fields == DataPoint.windSpeed) {
+                deets.Add(this.WindSpeed);
+            } else if (fields == DataPoint.brightness) {
+                deets.Add(this.Brightness);
+            } else if (fields == DataPoint.windDirection) {
+                deets.Add(this.WindDir);
             }
- 
             if (deets.Count < 2 )
             {
                 throw new InvalidOperationException("Cannot Create Chart with less than 2 axis");
@@ -81,14 +79,37 @@ namespace DBManager.JsonHelpers
  
             return deets;          
        }
-       public static List<string> GetHeaderList()
+       public static List<string> GetHeaderList(DataPoint fields = DataPoint.all)
        {
            var headers = new List<string>();
-           headers.Add(DBConstants.DBDeets.TimeKey);
-           headers.Add("Temperature");
-           headers.Add("Humidity"); 
-           headers.Add("Wind Speed");
-           headers.Add("Brightness");
+           headers.Add(DBDeets.TimeKey);
+           if (fields == DataPoint.all)
+           {
+               headers.Add(DBDeets.TemperatureKey);
+               headers.Add(DBDeets.HumidityKey);
+               headers.Add(DBDeets.WindSpeedKey);
+               headers.Add(DBDeets.BrightnessKey);
+           } else if (fields == DataPoint.temperature) {
+               
+               headers.Add(DBDeets.TemperatureKey);
+               
+           } else if (fields == DataPoint.humidity) {
+               
+               headers.Add(DBDeets.HumidityKey);
+               
+           } else if (fields == DataPoint.brightness) {
+               
+               headers.Add(DBDeets.BrightnessKey);
+               
+           } else if (fields == DataPoint.windSpeed) {
+               
+               headers.Add(DBDeets.WindSpeedKey);
+               
+           } else if (fields == DataPoint.windDirection)
+           {
+              headers.Add(DBDeets.WindDirectionKey); 
+           }
+
            return headers;
 
        }
@@ -96,13 +117,13 @@ namespace DBManager.JsonHelpers
 
     public class Weather_Chart
     {
-        public static List<object> ToGChartsArray(List<WeatherEntry> entries)
+        public static List<object> ToGChartsArray(List<WeatherEntry> entries,DataPoint fields = DataPoint.all)
         { 
             var gChartsArray = new List<object>();
-           gChartsArray.Add(WeatherEntry.GetHeaderList());
+           gChartsArray.Add(WeatherEntry.GetHeaderList(fields));
            entries.ForEach(entry =>
            {
-               gChartsArray.Add(entry.GetDataValues());
+               gChartsArray.Add(entry.GetDataValues(fields));
            });
 
            return gChartsArray;

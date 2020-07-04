@@ -50,7 +50,8 @@ namespace ADWDBCore.Controllers
         public ActionResult OnGetChartData()
         {
             var dummyList = Weather_Chart.GetDummyChart();
-            var convertedJson = JsonConvert.SerializeObject(dummyList, new JsonSerializerSettings()
+            var legitList = (dbMan as DBManager_Mongo).GetPastNDaysChart(60);
+            var convertedJson = JsonConvert.SerializeObject(legitList, new JsonSerializerSettings()
             {
                 NullValueHandling = NullValueHandling.Ignore
             });
