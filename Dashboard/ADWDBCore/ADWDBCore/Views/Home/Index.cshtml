@@ -59,7 +59,8 @@
                 async:false,
                 type:"GET"
                 }).responseText;
-            data = new google.visualization.DataTable(jsonData);
+            var asJson = JSON(jsonData);
+            data = new google.visualization.arrayToDataTable(asJson);
             var options = {'title':'TestChart','width':600,'height':500};
             var chart = new google.visualization.LineChart(document.getElementById('chart'));
             chart.draw(data,options);
