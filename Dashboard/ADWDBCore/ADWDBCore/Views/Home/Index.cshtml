@@ -19,6 +19,7 @@
 </div>
 <div class="row">
     <h4>Wind Speed: @ViewBag.WindSpeed -> @ViewBag.WindDir</h4> 
+    <h5>CallMe: @ViewBag.WeekDeets</h5>
 </div>
 
   <head>
@@ -30,10 +31,10 @@
       function drawChart() {
         var data = google.visualization.arrayToDataTable([
           ['Time', 'Temperature', 'Humidity'],
-          ['2004',  1000,      400],
-          ['2005',  1170,      460],
-          ['2006',  660,       1120],
-          ['2007',  1030,      540]
+          ['2004',  4,      400],
+          ['2005',  4,      460],
+          ['2006',  4,       1120],
+          ['2007',  4,      540]
         ]);
 
         var options = {
@@ -47,9 +48,33 @@
         chart.draw(data, options);
       }
     </script>
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(LoadData);
+        
+        function LoadData(){
+            var jsonData = $.ajax({
+                url:'Index/Charts/Test',
+                dataType:"json",
+                async:false,
+                type:"GET"
+                }).responseText;
+            data = new google.visualization.DataTable(jsonData);
+            var options = {'title':'TestChart','width':600,'height':500};
+            var chart = new google.visualization.LineChart(document.getElementById('chart'));
+            chart.draw(data,options);
+        }
+        
+        function ChartData(data) {
+            alert("Hia folks!")
+        }
+    
+    </script> 
+    
   </head>
   <body>
     <div id="curve_chart" style="width: 900px; height: 500px"></div>
+    <div id="chart" style="width: 900px; height: 500px"></div>
   </body>
 
 <div class="text-center">

@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ADWDBCore.Models;
+using DBConstants;
 using DBMan;
+using DBManager.JsonHelpers;
+using MongoDB.Bson;
+using Newtonsoft.Json;
 
 namespace ADWDBCore.Controllers
 {
@@ -42,6 +46,18 @@ namespace ADWDBCore.Controllers
             return PartialView("Index");
         }
 
+        [Route("Index/Charts/Test")]
+        public ActionResult OnGetChartData()
+        {
+            var dummyList = Weather_Chart.GetDummyChart();
+            var convertedJson = JsonConvert.SerializeObject(dummyList, new JsonSerializerSettings()
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            });
+
+            return Content(convertedJson);
+        }
+
         [HttpGet]
         public ActionResult Index()
         {
@@ -53,6 +69,7 @@ namespace ADWDBCore.Controllers
             ViewBag.WindSpeed = dbMan.LatestWindSpeed;
             ViewBag.WindDir = dbMan.LatestWindDir;
             ViewBag.Timestamp = dbMan.LatestTimestampFriendly;
+            //ViewBag.WeekDeets = (dbMan as DBManager_Mongo).weatherChartData(new List<BsonDocument>(),DataPoint.all);
             return View();
         }
 
