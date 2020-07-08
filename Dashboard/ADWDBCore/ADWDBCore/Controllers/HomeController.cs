@@ -45,20 +45,7 @@ namespace ADWDBCore.Controllers
             ViewBag.Timestamp = dbMan.LatestTimestampFriendly;
             return PartialView("Index");
         }
-
-        [Route("Index/Charts/Test")]
-        public ActionResult OnGetChartData()
-        {
-            var dummyList = Weather_Chart.GetDummyChart();
-            var legitList = (dbMan as DBManager_Mongo).GetPastNDaysChart(60);
-            var convertedJson = JsonConvert.SerializeObject(legitList, new JsonSerializerSettings()
-            {
-                NullValueHandling = NullValueHandling.Ignore
-            });
-
-            return Content(convertedJson);
-        }
-
+        
         [HttpGet]
         public ActionResult Index()
         {
@@ -84,5 +71,79 @@ namespace ADWDBCore.Controllers
         {
             return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
         }
+        
+        
+        #region Charts
+
+        [Route("Index/Charts/Test")]
+        public ActionResult OnGetChartData()
+        {
+            var dummyList = Weather_Chart.GetDummyChart();
+            var legitList = (dbMan as DBManager_Mongo).GetPastNDaysChart(60);
+            var convertedJson = JsonConvert.SerializeObject(legitList, new JsonSerializerSettings()
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            });
+
+            return Content(convertedJson);
+        }
+        
+        [Route("Index/Charts/All/Year")]
+        public ActionResult GetChartData_All_Year()
+        {
+            var legitList = dbMan.GetYearlyChart();
+            var convertedJson = JsonConvert.SerializeObject(legitList, new JsonSerializerSettings()
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            });
+
+            return Content(convertedJson);
+        }
+        
+         [Route("Index/Charts/All/Month")]
+          public ActionResult GetChartData_All_Month()
+          {
+             var legitList = dbMan.GetMontlyChart();
+             var convertedJson = JsonConvert.SerializeObject(legitList, new JsonSerializerSettings()
+             {
+                 NullValueHandling = NullValueHandling.Ignore
+             });
+ 
+             return Content(convertedJson);
+         }
+          
+          [Route("Index/Charts/All/Week")]
+          public ActionResult GetChartData_All_Week()
+          {
+              var legitList = dbMan.GetWeeklyChart();
+              var convertedJson = JsonConvert.SerializeObject(legitList, new JsonSerializerSettings()
+              {
+                  NullValueHandling = NullValueHandling.Ignore
+              });
+
+              return Content(convertedJson);
+          } 
+
+
+          [Route("Index/Charts/All/Day")]
+          public ActionResult GetChartData_All_Day()
+          {
+              var legitList = dbMan.GetDailyChart();
+              var convertedJson = JsonConvert.SerializeObject(legitList, new JsonSerializerSettings()
+              {
+                  NullValueHandling = NullValueHandling.Ignore
+              });
+
+              return Content(convertedJson);
+          }
+
+
+
+
+          #endregion Charts
+        
+        
+        
+        
     }
 }

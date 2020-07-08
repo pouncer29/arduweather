@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using DBConstants;
+using DBManager;
 using Microsoft.Win32;
 
 namespace DBMan
 {
-    public interface IDBManager
+    public interface IDBManager:IDrawsCharts
     {
         string LatestTemperature
         {

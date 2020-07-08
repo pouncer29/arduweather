@@ -22,60 +22,131 @@
     <h5>CallMe: @ViewBag.WeekDeets</h5>
 </div>
 
-  <head>
+<head>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
-      google.charts.load('current', {'packages':['corechart']});
-      google.charts.setOnLoadCallback(drawChart);
-
-      function drawChart() {
-        var data = google.visualization.arrayToDataTable([
-          ['Time', 'Temperature', 'Humidity'],
-          ['2004',  4,      400],
-          ['2005',  4,      460],
-          ['2006',  4,       1120],
-          ['2007',  4,      540]
-        ]);
-
-        var options = {
-          title: 'Company Performance',
-          curveType: 'function',
-          legend: { position: 'bottom' }
-        };
-
-        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
-
-        chart.draw(data, options);
-      }
+                google.charts.load('current', {'packages':['corechart']});
+                google.charts.setOnLoadCallback(TestChart);
+                
+                function TestChart(){
+                    var jsonData = $.ajax({
+                        url:'Index/Charts/Test',
+                        dataType:"json",
+                        async:false,
+                        type:"GET"
+                        }).responseText;
+                    var asJson = JSON.parse(jsonData);
+                    data = new google.visualization.arrayToDataTable(asJson);
+                    var options = {
+                      title: 'Test',
+                      curveType: 'function',
+                      legend: { position: 'bottom' }
+                    };
+                    var chart = new google.visualization.LineChart(document.getElementById('TestChart'));
+                    chart.draw(data,options);
+                }
+        </script>
+    <!-- My Charts -->
+    <script type="text/javascript">
+            google.charts.load('current', {'packages':['corechart']});
+            google.charts.setOnLoadCallback(ChartAll_Year);
+            
+            function ChartAll_Year(){
+                var jsonData = $.ajax({
+                    url:'Index/Charts/All/Year',
+                    dataType:"json",
+                    async:false,
+                    type:"GET"
+                    }).responseText;
+                var asJson = JSON.parse(jsonData);
+                data = new google.visualization.arrayToDataTable(asJson);
+                var options = {
+                  title: 'This Year: All',
+                  curveType: 'function',
+                  legend: { position: 'bottom' }
+                };
+                var chart = new google.visualization.LineChart(document.getElementById('All_Year_Chart'));
+                chart.draw(data,options);
+            }
     </script>
+
     <script type="text/javascript">
         google.charts.load('current', {'packages':['corechart']});
-        google.charts.setOnLoadCallback(LoadData);
+        google.charts.setOnLoadCallback(ChartAll_Month);
         
-        function LoadData(){
+        function ChartAll_Month(){
             var jsonData = $.ajax({
-                url:'Index/Charts/Test',
+                url:'Index/Charts/All/Month',
                 dataType:"json",
                 async:false,
                 type:"GET"
                 }).responseText;
-            alert(jsonData);
             var asJson = JSON.parse(jsonData);
             data = new google.visualization.arrayToDataTable(asJson);
             var options = {
-              title: 'Weather Data',
+              title: 'This Month: All',
               curveType: 'function',
               legend: { position: 'bottom' }
             };
-            var chart = new google.visualization.LineChart(document.getElementById('chart'));
+            var chart = new google.visualization.LineChart(document.getElementById('All_Month_Chart'));
             chart.draw(data,options);
         }
-    </script> 
-    
-  </head>
+    </script>
+
+
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(ChartAll_Week);
+        
+        function ChartAll_Week(){
+            var jsonData = $.ajax({
+                url:'Index/Charts/All/Week',
+                dataType:"json",
+                async:false,
+                type:"GET"
+                }).responseText;
+            var asJson = JSON.parse(jsonData);
+            data = new google.visualization.arrayToDataTable(asJson);
+            var options = {
+              title: 'This Week: All',
+              curveType: 'function',
+              legend: { position: 'bottom' }
+            };
+            var chart = new google.visualization.LineChart(document.getElementById('All_Week_Chart'));
+            chart.draw(data,options);
+        }
+    </script>
+
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(ChartAll_Day);
+        
+        function ChartAll_Day(){
+            var jsonData = $.ajax({
+                url:'Index/Charts/All/Day',
+                dataType:"json",
+                async:false,
+                type:"GET"
+                }).responseText;
+            var asJson = JSON.parse(jsonData);
+            data = new google.visualization.arrayToDataTable(asJson);
+            var options = {
+              title: 'This Day: All',
+              curveType: 'function',
+              legend: { position: 'bottom' }
+            };
+            var chart = new google.visualization.LineChart(document.getElementById('All_Day_Chart'));
+            chart.draw(data,options);
+        }
+    </script>
+</head>
   <body>
-    <div id="curve_chart" style="width: 900px; height: 500px"></div>
-    <div id="chart" style="width: 900px; height: 500px"></div>
+  <h2> My New Charts</h2>
+    <div id="TestChart" style="width: 900px; height: 500px"></div>
+    <div id="All_Year_Chart" style="width: 900px; height: 500px"></div>
+    <div id="All_Month_Chart" style="width: 900px; height: 500px"></div>
+    <div id="All_Week_Chart" style="width: 900px; height: 500px"></div>
+    <div id="All_Day_Chart" style="width: 900px; height: 500px"></div>
   </body>
 
 <div class="text-center">

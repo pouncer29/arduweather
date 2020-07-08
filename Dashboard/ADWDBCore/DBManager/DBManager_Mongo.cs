@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Timers;
 using DBConstants;
+using DBManager;
 using DBManager.JsonHelpers;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace DBMan
 { 
-    public class DBManager_Mongo:IDBManager
+    public class DBManager_Mongo:IDBManager,IDrawsCharts
     {
         public event EventHandler<EventArgs> NewEntry;
         
@@ -49,10 +50,6 @@ namespace DBMan
             var oldTimestamp = double.Parse(this.LatestTimestamp);
             this.GetLatestEntry();
             var newTimestamp = double.Parse(this.LatestTimestamp);
-
-//            var oldWindDir = this.LatestWindDir;
-//            this.GetLatestEntry();
- //           var newWindDir = this.LatestWindDir;
 
             if (oldTimestamp > newTimestamp)
             {
@@ -121,6 +118,14 @@ namespace DBMan
 
         #region  Chart Helpers
 
+        public List<object> GetDailyChart(DataPoint fields = DataPoint.all)
+        {
+            var now = DateTime.Today;
+            var dailyEntries = this.getEntriesInRange(now);
+            return this.weatherChartData(dailyEntries);
+
+        }
+
         /// <summary>
         /// For the google charts Api. Should return a list of lists in the form
         /// [
@@ -130,69 +135,35 @@ namespace DBMan
         /// ]
         /// </summary>
         /// <returns>a google charts string</returns>
-        public string GetWeeklyChart(DataPoint fields = DataPoint.all)
+        public List<object> GetWeeklyChart(DataPoint fields = DataPoint.all)
         {
-            var weekChartString = string.Empty;
-
-            //var maxTime = new DateTimeOffset(DateTime.Today,TimeSpan.Zero).ToUnixTimeSeconds();
-            var maxTime = new DateTimeOffset(DateTime.Today).ToUnixTimeSeconds();
-            var pastSevenDays = DateTime.Today.AddDays(-7);
-            var minTime = new DateTimeOffset(pastSevenDays).ToUnixTimeSeconds();
-            //we need to create an entry doc.            
-            var minFilter = Builders<BsonDocument>.Filter
-                .Gte(DBDeets.TimeKey, minTime);
-            var maxFilter = Builders<BsonDocument>.Filter
-                .Lte(DBDeets.TimeKey, maxTime);
-            var rangeFilter = Builders<BsonDocument>.Filter.And(
-                    minFilter,
-                    maxFilter
-                );
-            
-            var collection = weatherDB.GetCollection<BsonDocument>(DBDeets.LiveKey);
-            var results = collection.Find(rangeFilter).ToList();
-            weekChartString = results.ToString();
-            return weekChartString;
+            //This week
+            var pastWeek = DateTime.Today.AddDays(-7);
+            var weeklyEntries = this.getEntriesInRange(pastWeek);
+            return this.weatherChartData(weeklyEntries);
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public string GetMontlyChart(DataPoint fields = DataPoint.all)
+        public List<object> GetMontlyChart(DataPoint fields = DataPoint.all)
         {
-            var montlyChartString = string.Empty;
-
-            //Today
-            var maxTime = new DateTimeOffset(DateTime.Today).ToUnixTimeSeconds();
-           
             //This month
             var DayOfMonth = DateTime.Today.Date.Day;
             var pastMonth = DateTime.Today.AddDays(-1*DayOfMonth);
-            var minTime = new DateTimeOffset(pastMonth).ToUnixTimeSeconds();
+
+            var montlyEntries = this.getEntriesInRange(pastMonth);
             
-            //we need to create an entry doc.            
-            var minFilter = Builders<BsonDocument>.Filter
-                .Gte(DBDeets.TimeKey, minTime);
-            var maxFilter = Builders<BsonDocument>.Filter
-                .Lte(DBDeets.TimeKey, maxTime);
-            var rangeFilter = Builders<BsonDocument>.Filter.And(
-                    minFilter,
-                    maxFilter
-                );
-            
-            var collection = weatherDB.GetCollection<BsonDocument>(DBDeets.LiveKey);
-            var results = collection.Find(rangeFilter).ToList();
-            montlyChartString= results.ToString();
-            return montlyChartString;
+            return this.weatherChartData(montlyEntries, fields);
         }
 
         /// <summary>
         /// Yearly Data
         /// </summary>
         /// <returns></returns>
-        public string GetYearlyChart(DataPoint fields = DataPoint.all)
+        public List<object> GetYearlyChart(DataPoint fields = DataPoint.all)
         {
-            var yearlyChartString = string.Empty;
 
             //Today
             var maxTime = new DateTimeOffset(DateTime.Today).ToUnixTimeSeconds();
@@ -200,23 +171,10 @@ namespace DBMan
             //This month
             var DayOfYear = DateTime.Today.Date.DayOfYear;
             var pastYear = DateTime.Today.AddDays(-1*DayOfYear);
-            var minTime = new DateTimeOffset(pastYear).ToUnixTimeSeconds();
-            
-            //we need to create an entry doc.            
-            var minFilter = Builders<BsonDocument>.Filter
-                .Gte(DBDeets.TimeKey, minTime);
-            var maxFilter = Builders<BsonDocument>.Filter
-                .Lte(DBDeets.TimeKey, maxTime);
-            var rangeFilter = Builders<BsonDocument>.Filter.And(
-                    minFilter,
-                    maxFilter
-                );
-            
-            var collection = weatherDB.GetCollection<BsonDocument>(DBDeets.LiveKey);
-            var results = collection.Find(rangeFilter).ToList();
-            yearlyChartString= results.ToString();
-            return yearlyChartString;
-    
+
+            var yearlyEntries = this.getEntriesInRange(pastYear);
+
+            return this.weatherChartData(yearlyEntries,fields);
         }
 
         /// <summary>
@@ -230,30 +188,11 @@ namespace DBMan
             {
                 days = 0;
             }
-            
-            var pastNString = string.Empty;
 
-             //Today
-             var maxTime = new DateTimeOffset(DateTime.Today).ToUnixTimeSeconds();
+            //Query for past N Days
+            var pastNDays = this.getEntriesInRange(DateTime.Today.AddDays(-1 * days));
             
-             //Past n days
-             var pastMonth = DateTime.Today.AddDays(-1*days);
-             var minTime = new DateTimeOffset(pastMonth).ToUnixTimeSeconds();
-             
-             //we need to create an entry doc.            
-             var minFilter = Builders<BsonDocument>.Filter
-                 .Gte(DBDeets.TimeKey, minTime);
-             var maxFilter = Builders<BsonDocument>.Filter
-                 .Lte(DBDeets.TimeKey, maxTime);
-             var rangeFilter = Builders<BsonDocument>.Filter.And(
-                     minFilter,
-                     maxFilter
-                 );
-             
-             var collection = weatherDB.GetCollection<BsonDocument>(DBDeets.LiveKey);
-             var results = collection.Find(rangeFilter).ToList();
-
-             return this.weatherChartData(results, DataPoint.all);
+            return this.weatherChartData(pastNDays, fields);
 
         }
         
@@ -301,7 +240,43 @@ namespace DBMan
             var chart = Weather_Chart.ToGChartsArray(weatherData,fields);
             return chart;
         }
-        
+
+        /// <summary>
+        /// Queries the database for entries back to the provided min time to today
+        /// </summary>
+        /// <param name="min">The farthest back to search</param>
+        /// <returns>The Entries that fall within range</returns>
+        private List<BsonDocument> getEntriesInRange(DateTime min,DataPoint fields = DataPoint.all)
+        {
+             var maxTime = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
+             var minTime = new DateTimeOffset(min).ToUnixTimeSeconds();
+
+             try
+             {
+
+                 // Create filters
+                 var minFilter = Builders<BsonDocument>.Filter
+                     .Gte(DBDeets.TimeKey, minTime);
+                 var maxFilter = Builders<BsonDocument>.Filter
+                     .Lte(DBDeets.TimeKey, maxTime);
+                 var rangeFilter = Builders<BsonDocument>.Filter.And(
+                     minFilter,
+                     maxFilter
+                 );
+
+                 //Execute the query
+                 var collection = weatherDB.GetCollection<BsonDocument>(DBDeets.LiveKey);
+                 var results = collection.Find(rangeFilter).ToList();
+                 
+                //Return found results
+                return results;
+             }
+             catch (Exception)
+             {
+                 return new List<BsonDocument>();
+             }
+
+        }
         #endregion Chart Helpers
 
         /// <summary>
