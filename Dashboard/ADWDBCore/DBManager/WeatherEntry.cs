@@ -61,15 +61,15 @@ namespace DBManager.JsonHelpers
                 deets.Add(this.WindSpeed);
                 deets.Add(this.Brightness);
                 
-            } else if (fields == DataPoint.temperature) {
+            } if (fields.HasFlag(DataPoint.temperature)) {
                 deets.Add(this.TEMPERATURE);
-            } else if (fields == DataPoint.humidity) {
+            } if (fields.HasFlag(DataPoint.humidity)) {
                 deets.Add(this.Humidity);
-            } else if (fields == DataPoint.windSpeed) {
+            } if (fields.HasFlag(DataPoint.windSpeed)) {
                 deets.Add(this.WindSpeed);
-            } else if (fields == DataPoint.brightness) {
+            } if (fields.HasFlag(DataPoint.brightness)) {
                 deets.Add(this.Brightness);
-            } else if (fields == DataPoint.windDirection) {
+            } if (fields.HasFlag(DataPoint.windDirection)) {
                 deets.Add(this.WindDir);
             }
             if (deets.Count < 2 )
@@ -89,23 +89,24 @@ namespace DBManager.JsonHelpers
                headers.Add(DBDeets.HumidityKey);
                headers.Add(DBDeets.WindSpeedKey);
                headers.Add(DBDeets.BrightnessKey);
-           } else if (fields == DataPoint.temperature) {
+           } 
+           if (fields.HasFlag(DataPoint.temperature)) {
                
                headers.Add(DBDeets.TemperatureKey);
                
-           } else if (fields == DataPoint.humidity) {
+           } if (fields.HasFlag(DataPoint.humidity)) {
                
                headers.Add(DBDeets.HumidityKey);
                
-           } else if (fields == DataPoint.brightness) {
+           } if (fields.HasFlag(DataPoint.brightness)) {
                
                headers.Add(DBDeets.BrightnessKey);
                
-           } else if (fields == DataPoint.windSpeed) {
+           } if (fields.HasFlag(DataPoint.windSpeed)) {
                
                headers.Add(DBDeets.WindSpeedKey);
                
-           } else if (fields == DataPoint.windDirection)
+           } if (fields.HasFlag(DataPoint.windDirection))
            {
               headers.Add(DBDeets.WindDirectionKey); 
            }

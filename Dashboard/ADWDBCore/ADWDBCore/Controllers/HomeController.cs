@@ -38,7 +38,7 @@ namespace ADWDBCore.Controllers
         {
             ViewBag.Timestamp = dbMan.LatestTimestamp;
             ViewBag.Temperature = dbMan.LatestTemperature;
-            ViewBag.Humidity = dbMan.LatestTemperature;
+            ViewBag.Humidity = dbMan.LatestHumidity;
             ViewBag.Brightness = dbMan.LatestBrightness;
             ViewBag.WindSpeed = dbMan.LatestWindSpeed;
             ViewBag.WindDir = dbMan.LatestWindDir;
@@ -52,7 +52,7 @@ namespace ADWDBCore.Controllers
             //var dbMan = new DBManager_Mongo();
             ViewBag.Timestamp = dbMan.LatestTimestamp;
             ViewBag.Temperature = dbMan.LatestTemperature;
-            ViewBag.Humidity = dbMan.LatestTemperature;
+            ViewBag.Humidity = dbMan.LatestHumidity;
             ViewBag.Brightness = dbMan.LatestBrightness;
             ViewBag.WindSpeed = dbMan.LatestWindSpeed;
             ViewBag.WindDir = dbMan.LatestWindDir;
@@ -115,7 +115,9 @@ namespace ADWDBCore.Controllers
           [Route("Index/Charts/All/Week")]
           public ActionResult GetChartData_All_Week()
           {
-              var legitList = dbMan.GetWeeklyChart();
+              DataPoint points;
+              points = DataPoint.temperature | DataPoint.humidity;
+              var legitList = dbMan.GetWeeklyChart(points);
               var convertedJson = JsonConvert.SerializeObject(legitList, new JsonSerializerSettings()
               {
                   NullValueHandling = NullValueHandling.Ignore

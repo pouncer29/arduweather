@@ -139,8 +139,8 @@ namespace DBMan
         {
             //This week
             var pastWeek = DateTime.Today.AddDays(-7);
-            var weeklyEntries = this.getEntriesInRange(pastWeek);
-            return this.weatherChartData(weeklyEntries);
+            var weeklyEntries = this.getEntriesInRange(pastWeek,fields);
+            return this.weatherChartData(weeklyEntries,fields);
         }
 
         /// <summary>
@@ -226,17 +226,48 @@ namespace DBMan
                        WindDir = doc[DBDeets.WindDirectionKey].ToString()
                    });
                }); 
-            } else if (fields == DataPoint.temperature){
+            }
+            else
+            {
                 docs.ForEach(doc =>
                 {
-                    weatherData.Add(new WeatherEntry(this.GetTime(doc[DBDeets.TimeKey].ToString(),"d"))
+                    //ALWAYS add Time
+                    var newWeatherEntry = new WeatherEntry(this.GetTime(doc[DBDeets.TimeKey].ToString(), "d"));
+                    
+                    //Add Temperature
+                    if (fields.HasFlag(DataPoint.temperature))
                     {
-                        TEMPERATURE = double.Parse(doc[DBDeets.TemperatureKey].ToString()),
-                        WindDir = doc[DBDeets.WindDirectionKey].ToString()
-                    });
-                });                
-            }
+                        newWeatherEntry.TEMPERATURE = double.Parse(doc[DBDeets.TemperatureKey].ToString());
+                    }
 
+                    //Add Humidity
+                    if (fields.HasFlag(DataPoint.humidity))
+                    {
+                        newWeatherEntry.Humidity = double.Parse(doc[DBDeets.HumidityKey].ToString());
+                    }
+
+                    //Add brightness
+                    if (fields.HasFlag(DataPoint.brightness))
+                    {
+                        newWeatherEntry.Brightness = double.Parse(doc[DBDeets.BrightnessKey].ToString());
+                    }
+
+                    //Add Wind Speed
+                    if (fields.HasFlag(DataPoint.windSpeed))
+                    {
+                       newWeatherEntry.WindSpeed = double.Parse(doc[DBDeets.WindSpeedKey].ToString()); 
+                    }
+
+                    // Add wind direction
+                    if (fields.HasFlag(DataPoint.windDirection))
+                    {
+                        doc[DBDeets.WindDirectionKey].ToString();
+                    }
+                    
+                    
+                    weatherData.Add(newWeatherEntry);
+                });
+            }
             var chart = Weather_Chart.ToGChartsArray(weatherData,fields);
             return chart;
         }
@@ -250,10 +281,12 @@ namespace DBMan
         {
              var maxTime = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
              var minTime = new DateTimeOffset(min).ToUnixTimeSeconds();
-
              try
              {
 
+                 var collection = weatherDB.GetCollection<BsonDocument>(DBDeets.LiveKey);
+                 List<BsonDocument> results = null;
+                 
                  // Create filters
                  var minFilter = Builders<BsonDocument>.Filter
                      .Gte(DBDeets.TimeKey, minTime);
@@ -263,10 +296,19 @@ namespace DBMan
                      minFilter,
                      maxFilter
                  );
+                 if (fields != DataPoint.all)
+                 {
+                     var projection = this.getProjections(fields);
+                     results = collection.Find(rangeFilter)
+                         .Project(projection)
+                         .ToList();
+                 }
+                 else
+                 {
+                    results = collection.Find(rangeFilter).ToList();
+                 }
 
                  //Execute the query
-                 var collection = weatherDB.GetCollection<BsonDocument>(DBDeets.LiveKey);
-                 var results = collection.Find(rangeFilter).ToList();
                  
                 //Return found results
                 return results;
@@ -275,6 +317,66 @@ namespace DBMan
              {
                  return new List<BsonDocument>();
              }
+
+        }
+
+        private string getProjections(DataPoint fields = DataPoint.all)
+        {
+            if (fields == DataPoint.all)
+            {
+                throw new InvalidOperationException("No Projections should be used when dealing with ALL data points");
+            }
+
+            var projections = new List<string>();
+           
+            //ALWAYS add time
+            projections.Add(this.formatProjectionString(DBDeets.TimeKey));
+            
+            //Add temperature to projection
+            if (fields.HasFlag(DataPoint.temperature))
+            {
+                projections.Add(this.formatProjectionString(DBDeets.TemperatureKey));
+            }
+
+            //Add humidity to projection
+            if (fields.HasFlag(DataPoint.humidity))
+            {
+                projections.Add(this.formatProjectionString(DBDeets.HumidityKey));
+            }
+
+            //Add brightness to projection
+            if (fields.HasFlag(DataPoint.brightness))
+            {
+                projections.Add(this.formatProjectionString(DBDeets.BrightnessKey));
+            }
+
+            //Add Wind Speed to projection
+            if (fields.HasFlag(DataPoint.windSpeed))
+            {
+                projections.Add(this.formatProjectionString(DBDeets.WindSpeedKey));
+            }
+
+            //Add Wind Dir to projection
+            if (fields.HasFlag(DataPoint.windDirection))
+            {
+                projections.Add(this.formatProjectionString(DBDeets.WindDirectionKey));
+            }
+
+            var projectionString = "{" + string.Join(',', projections) + "}";
+            return projectionString;
+        }
+
+        private string formatProjectionString(string keyname)
+        {
+            //Make sure the data point name actualluy exists in known fields
+            if (DBDeets.DeetsDict.ContainsValue(keyname) == false)
+            {
+                return $"INVALID Value PASSED: {keyname}";
+            }
+
+            //Format the flag.
+            var projString = $"{keyname}:1";
+            return projString;
 
         }
         #endregion Chart Helpers
