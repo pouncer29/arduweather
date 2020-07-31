@@ -101,7 +101,7 @@ float getTemperature(){
   float tempTwo = dht.readTemperature();
   Serial.print("Temperature Readings were:");Serial.print(temp);Serial.print(":");Serial.println(tempTwo);
   float avgTemp = (temp + tempTwo)/2.0;
-  return avgTemp;
+  return tempTwo;
 }
 
 float getHumidity(){
@@ -157,7 +157,7 @@ void loop() {
   } else if (elapsed_sendData > sendTime){
     //Serial.println("Sending details");
     
-    IPAddress remoteIP(172,16,1,69);
+    IPAddress remoteIP(172,16,1,74);
     Serial.print(remoteIP);
     Serial.println(20001);
 

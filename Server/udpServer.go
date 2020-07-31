@@ -92,8 +92,8 @@ func toDatabase(e *entry) string{
 	defer client.Disconnect(ctx)
 
 	//Grab Collection
-	adwdb := client.Database("TestDB")
-	liveWeatherCollection := adwdb.Collection("TestCollection")
+	adwdb := client.Database("adwdb")
+	liveWeatherCollection := adwdb.Collection("LIVE_WEATHER_DATA")
 
 	entryResult,err:= liveWeatherCollection.InsertOne(ctx, bson.D{
 		{Key:"Timestamp",Value:timestamp},
