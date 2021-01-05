@@ -157,7 +157,7 @@ void loop() {
   } else if (elapsed_sendData > sendTime){
     //Serial.println("Sending details");
     
-    IPAddress remoteIP(172,16,1,74);
+    IPAddress remoteIP(192,168,43,78);
     Serial.print(remoteIP);
     Serial.println(20001);
 
