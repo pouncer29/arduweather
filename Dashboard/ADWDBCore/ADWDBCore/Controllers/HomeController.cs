@@ -45,6 +45,21 @@ namespace ADWDBCore.Controllers
             ViewBag.Timestamp = dbMan.LatestTimestampFriendly;
             return PartialView("Index");
         }
+
+        [HttpPost]
+        [ActionName("DrawChartX")]
+        [Route("Index/Charts/DrawChartX")]
+        public ActionResult DrawChartX(Object data)
+        {
+            Console.WriteLine(data.ToString());
+            var legitList = dbMan.GetMontlyChart(DataPoint.temperature);
+             var convertedJson = JsonConvert.SerializeObject(legitList, new JsonSerializerSettings()
+             {
+                 NullValueHandling = NullValueHandling.Ignore
+             });
+ 
+             return Content(convertedJson);    
+        }
         
         [HttpGet]
         public ActionResult Index()
@@ -87,7 +102,8 @@ namespace ADWDBCore.Controllers
 
             return Content(convertedJson);
         }
-        
+       
+        #region all
         [Route("Index/Charts/All/Year")]
         public ActionResult GetChartData_All_Year()
         {
@@ -115,9 +131,8 @@ namespace ADWDBCore.Controllers
           [Route("Index/Charts/All/Week")]
           public ActionResult GetChartData_All_Week()
           {
-              DataPoint points;
-              points = DataPoint.temperature | DataPoint.humidity;
-              var legitList = dbMan.GetWeeklyChart(points);
+              //points = DataPoint.temperature | DataPoint.humidity;
+              var legitList = dbMan.GetWeeklyChart();
               var convertedJson = JsonConvert.SerializeObject(legitList, new JsonSerializerSettings()
               {
                   NullValueHandling = NullValueHandling.Ignore
@@ -139,6 +154,14 @@ namespace ADWDBCore.Controllers
               return Content(convertedJson);
           }
 
+          #endregion
+          
+          
+          #region 
+
+          
+
+          #endregion
 
 
 
