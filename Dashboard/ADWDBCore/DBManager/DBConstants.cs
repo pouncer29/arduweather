@@ -30,7 +30,7 @@ namespace DBConstants
         public static readonly string DBName = "adwdb"; //adwdb
         public static readonly string LiveKey = "LIVE_WEATHER_DATA"; //LIVE_WEATHER_DATA
         public static readonly string ArchiveKey = "ARCHIVED_WEATHER_DATA";
-        public static readonly string ConnectionString = "mongodb://127.0.0.1:27017";
+        public static readonly string ConnectionString = "mongodb://172.16.1.69:27017";
         public static readonly double pollTime = 0.05;
 
         public static Dictionary<DataPoint, string> DeetsDict = new Dictionary<DataPoint, string>()

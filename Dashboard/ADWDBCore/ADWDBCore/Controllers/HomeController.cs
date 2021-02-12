@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -14,6 +16,29 @@ using Newtonsoft.Json;
 
 namespace ADWDBCore.Controllers
 {
+    public class DataSelect
+    {
+        public string Timeline { get; set; }
+        public DataPoint TemperatureBox{ get; set; }
+        public DataPoint HumidityBox { get; set; }
+        public DataPoint BrightnessBox{ get; set; }
+        public DataPoint WindSpeedBox{ get; set; }
+
+        public DataPoint points
+        {
+            get
+            {
+                return TemperatureBox | HumidityBox | BrightnessBox | WindSpeedBox;
+            }
+        }
+
+        public override string ToString()
+        {
+            return
+                $"Timeline: {Timeline} \n" +
+                $"Temperature {TemperatureBox}, Humidity {HumidityBox}, Brightness {BrightnessBox}, WindSpeed {WindSpeedBox}";
+        }
+    }
     
      public class HomeController : Controller
     {
@@ -47,17 +72,26 @@ namespace ADWDBCore.Controllers
         }
 
         [HttpPost]
-        [ActionName("DrawChartX")]
+        //[ActionName("DrawChartX")]
         [Route("Index/Charts/DrawChartX")]
-        public ActionResult DrawChartX(Object data)
+        public ActionResult DrawChartX(DataSelect data)
         {
             Console.WriteLine(data.ToString());
-            var legitList = dbMan.GetMontlyChart(DataPoint.temperature);
-             var convertedJson = JsonConvert.SerializeObject(legitList, new JsonSerializerSettings()
+            List<Object> dataList = null;
+            if (data.Timeline.Equals("Week"))
+                dataList = dbMan.GetWeeklyChart(data.points);
+            else if (data.Timeline.Equals("Month"))
+                dataList = dbMan.GetMontlyChart(data.points);
+            else if (data.Timeline.Equals("Year"))
+                dataList = dbMan.GetYearlyChart(data.points);
+            else
+                dataList = dbMan.GetDailyChart(data.points);
+
+             var convertedJson = JsonConvert.SerializeObject(dataList, new JsonSerializerSettings()
              {
                  NullValueHandling = NullValueHandling.Ignore
              });
- 
+
              return Content(convertedJson);    
         }
         
