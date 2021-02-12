@@ -14,11 +14,9 @@ import (
 type entry struct {
 	 Humidity float32 `json:"Humidity"`
 	 Temp float32 `json:"Temp"`
-	 Brightness float32 `json:Brightness`
 	 WindSpeed float32 `json:"WindSpeed"`
-	 WindDir string `json:"WindDir"`
+	 Brightness float32 `json:Brightness`
 }
-
 /* End Structs*/
 
 func random(min, max int) int {
