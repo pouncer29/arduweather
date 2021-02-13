@@ -138,9 +138,11 @@
             chart.draw(data,options);
         }
     </script>
+     
 </head>
   <body>
   <h2>my form</h2>
+      <!-- <form id="ChartDrawForm" method="post" action="/Index/Charts/DrawChartX" enctype="application/x-www-form-urlencoded"> !-->
   <div style="overflow:auto;white-space:nowrap">
       <form id="ChartDrawForm" method="post" action="/Index/Charts/DrawChartX" enctype="application/x-www-form-urlencoded">
           <select id="Timeline" name="Timeline">
@@ -161,8 +163,32 @@
       </form>
   </div>
   
+  
+    <script type="text/javascript"> 
+              $("#ChartDrawForm").submit(function (event){
+                  alert("Well, we called it...");
+                   event.preventDefault();
+                   var jsonData = $.ajax({
+                       url:'Index/Charts/DrawChartX',
+                       data:$("#ChartDrawForm").serialize(),
+                       type:"POST"
+                       }).responseText;
+                   var asJson = JSON.parse(jsonData);
+                   data = new google.visualization.arrayToDataTable(asJson);
+                   var options = {
+                     title: 'This Day: All',
+                     curveType: 'function',
+                     legend: { position: 'bottom' }
+                   };
+                   var chart = new google.visualization.LineChart(document.getElementById('ConfigChart'));
+                   chart.draw(data,options);           
+            
+              })
+            
+            </script>
+       
   <h2> My New Charts</h2>
-    <div id="TestChart" style="width: 900px; height: 500px"></div>
+    <div id="ConfigChart" style="width: 900px; height: 500px"></div>
     <div id="All_Year_Chart" style="width: 900px; height: 500px"></div>
     <div id="All_Month_Chart" style="width: 900px; height: 500px"></div>
     <div id="All_Week_Chart" style="width: 900px; height: 500px"></div>

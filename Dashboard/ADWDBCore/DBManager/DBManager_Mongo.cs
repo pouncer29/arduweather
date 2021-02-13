@@ -122,7 +122,7 @@ namespace DBMan
         {
             var now = DateTime.Today;
             var dailyEntries = this.getEntriesInRange(now);
-            return this.weatherChartData(dailyEntries);
+            return this.weatherChartData(dailyEntries,fields);
 
         }
 
