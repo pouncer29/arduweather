@@ -9,15 +9,15 @@
                       $("#ChartDrawForm").submit(function (event){
                           event.preventDefault();
                           let formData = $("#ChartDrawForm").serialize();
-                          alert("data is: " + formData);
+                          //alert("data is: " + formData);
                            let jsonData = $.ajax({
                                url:'Index/Charts/DrawChartX',
                                async:false,
-                               data:$("#ChartDrawForm").serialize(),
+                               data:formData,
                                type:"POST"
                                }).responseText;
                            let asJson = JSON.parse(jsonData);
-                           alert("Json Data is: " + jsonData);
+                           //alert("Json Data is: " + jsonData);
                            data = new google.visualization.arrayToDataTable(asJson);
                            let options = {
                              title: 'This Day: All',
