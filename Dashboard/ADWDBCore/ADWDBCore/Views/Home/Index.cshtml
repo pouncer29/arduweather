@@ -1,27 +1,36 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-<div class="jumbotron">
-    <h1>What Is the Weather Like On The Deck?</h1>
-    <h3>&#64</h3>
-    <h3>@ViewBag.Timestamp</h3>
-</div>
-<div class="row">
-    <h4>Temperature: @ViewBag.Temperature&#186C</h4>
-</div>
-
-<div class="row">
-    <h4>Humidity: @ViewBag.Humidity</h4>
-</div>
-
-<div class="row">
-    <h4>Brightness: @ViewBag.Brightness &#9728</h4>
-</div>
-<div class="row">
-    <h4>Wind Speed: @ViewBag.WindSpeed -> @ViewBag.WindDir</h4> 
-</div>
 
 <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript"> 
+                  $("document").ready(function (){
+                      $("#ChartDrawForm").submit(function (event){
+                          event.preventDefault();
+                          let formData = $("#ChartDrawForm").serialize();
+                          alert("data is: " + formData);
+                           let jsonData = $.ajax({
+                               url:'Index/Charts/DrawChartX',
+                               async:false,
+                               data:$("#ChartDrawForm").serialize(),
+                               type:"POST"
+                               }).responseText;
+                           let asJson = JSON.parse(jsonData);
+                           alert("Json Data is: " + jsonData);
+                           data = new google.visualization.arrayToDataTable(asJson);
+                           let options = {
+                             title: 'This Day: All',
+                             curveType: 'function',
+                             legend: { position: 'bottom' }
+                           };
+                           let chart = new google.visualization.LineChart(document.getElementById('ConfigChart'));
+                           chart.draw(data,options);           
+                      });
+                  });
+                
+    </script>
+
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
                 google.charts.load('current', {'packages':['corechart']});
@@ -138,13 +147,36 @@
             chart.draw(data,options);
         }
     </script>
-     
+
+
+
 </head>
   <body>
+ <div class="jumbotron">
+     <h1>What Is the Weather Like On The Deck?</h1>
+     <h3>&#64</h3>
+     <h3>@ViewBag.Timestamp</h3>
+ </div>
+ <div class="row">
+     <h4>Temperature: @ViewBag.Temperature&#186C</h4>
+ </div>
+ 
+ <div class="row">
+     <h4>Humidity: @ViewBag.Humidity</h4>
+ </div>
+ 
+ <div class="row">
+     <h4>Brightness: @ViewBag.Brightness &#9728</h4>
+ </div>
+ <div class="row">
+     <h4>Wind Speed: @ViewBag.WindSpeed -> @ViewBag.WindDir</h4> 
+ </div>
+ 
+  
   <h2>my form</h2>
       <!-- <form id="ChartDrawForm" method="post" action="/Index/Charts/DrawChartX" enctype="application/x-www-form-urlencoded"> !-->
   <div style="overflow:auto;white-space:nowrap">
-      <form id="ChartDrawForm" method="post" action="/Index/Charts/DrawChartX" enctype="application/x-www-form-urlencoded">
+      <form id="ChartDrawForm" action="" enctype="application/x-www-form-urlencoded">
           <select id="Timeline" name="Timeline">
               <option value="Day"name="Day">Day</option>
               <option value="Week"name="Week">Week</option>
@@ -164,28 +196,7 @@
   </div>
   
   
-    <script type="text/javascript"> 
-              $("#ChartDrawForm").submit(function (event){
-                  alert("Well, we called it...");
-                   event.preventDefault();
-                   var jsonData = $.ajax({
-                       url:'Index/Charts/DrawChartX',
-                       data:$("#ChartDrawForm").serialize(),
-                       type:"POST"
-                       }).responseText;
-                   var asJson = JSON.parse(jsonData);
-                   data = new google.visualization.arrayToDataTable(asJson);
-                   var options = {
-                     title: 'This Day: All',
-                     curveType: 'function',
-                     legend: { position: 'bottom' }
-                   };
-                   var chart = new google.visualization.LineChart(document.getElementById('ConfigChart'));
-                   chart.draw(data,options);           
-            
-              })
-            
-            </script>
+    
        
   <h2> My New Charts</h2>
     <div id="ConfigChart" style="width: 900px; height: 500px"></div>
