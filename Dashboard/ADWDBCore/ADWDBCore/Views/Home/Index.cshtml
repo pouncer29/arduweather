@@ -5,9 +5,7 @@
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script type="text/javascript"> 
-                  $("document").ready(function (){
-                      $("#ChartDrawForm").submit(function (event){
-                          event.preventDefault();
+                      function DrawCustom(){
                           let formData = $("#ChartDrawForm").serialize();
                           //alert("data is: " + formData);
                            let jsonData = $.ajax({
@@ -17,18 +15,15 @@
                                type:"POST"
                                }).responseText;
                            let asJson = JSON.parse(jsonData);
-                           //alert("Json Data is: " + jsonData);
-                           data = new google.visualization.arrayToDataTable(asJson);
+                           data = new google.visualization.arrayToDataTable(asJson["DataPoints"]);
                            let options = {
-                             title: 'This Day: All',
+                             title: asJson["Title"],
                              curveType: 'function',
                              legend: { position: 'bottom' }
                            };
                            let chart = new google.visualization.LineChart(document.getElementById('ConfigChart'));
                            chart.draw(data,options);           
-                      });
-                  });
-                
+                      }
     </script>
 
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -177,21 +172,21 @@
       <!-- <form id="ChartDrawForm" method="post" action="/Index/Charts/DrawChartX" enctype="application/x-www-form-urlencoded"> !-->
   <div style="overflow:auto;white-space:nowrap">
       <form id="ChartDrawForm" action="" enctype="application/x-www-form-urlencoded">
-          <select id="Timeline" name="Timeline">
+          <select id="Timeline" onchange="DrawCustom()" name="Timeline">
               <option value="Day"name="Day">Day</option>
               <option value="Week"name="Week">Week</option>
               <option value="Month"name="Month">Month</option>
               <option value="Year" name="Year">Year</option>
           </select>
-          <input type="checkbox" id="TemperatureBox" name="TemperatureBox" value="2"/>
+          <input type="checkbox" id="TemperatureBox" onclick="DrawCustom()" name="TemperatureBox" value="2"/>
           <label for="TemperatureBox"> Temperature</label>
-          <input type="checkbox" id="HumidityBox" name="HumidityBox" value="4"/>
+          <input type="checkbox" id="HumidityBox" onclick="DrawCustom()" name="HumidityBox" value="4"/>
           <label for="HumidityBox"> Humidity</label>
-          <input type="checkbox" id="BrightnessBox" name="BrightnessBox" value="8"/>
+          <input type="checkbox" id="BrightnessBox" onclick="DrawCustom()" name="BrightnessBox" value="8"/>
           <label for="BrightnessBox"> Brightness</label>
-          <input type="checkbox" id="WindSpeedBox" name="WindSpeedBox" value="16"/>
+          <input type="checkbox" id="WindSpeedBox" onclick="DrawCustom()" name="WindSpeedBox" value="16"/>
           <label for="WindSpeedBox"> WindSpeed</label>
-          <input type="submit" value="Draw"/>
+          <!--<input type="submit" value="Draw"/> !-->
       </form>
   </div>
   

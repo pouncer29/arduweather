@@ -13,6 +13,7 @@ using DBMan;
 using DBManager.JsonHelpers;
 using MongoDB.Bson;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace ADWDBCore.Controllers
 {
@@ -78,6 +79,7 @@ namespace ADWDBCore.Controllers
         {
             Console.WriteLine(data.ToString());
             List<Object> dataList = null;
+            JObject chartDeets = new JObject();
             if (data.Timeline.Equals("Week"))
                 dataList = dbMan.GetWeeklyChart(data.points);
             else if (data.Timeline.Equals("Month"))
@@ -85,14 +87,20 @@ namespace ADWDBCore.Controllers
             else if (data.Timeline.Equals("Year"))
                 dataList = dbMan.GetYearlyChart(data.points);
             else
+            {
                 dataList = dbMan.GetDailyChart(data.points);
+                data.Timeline = "Dai";
+            }
 
-             var convertedJson = JsonConvert.SerializeObject(dataList, new JsonSerializerSettings()
+            chartDeets["Title"] = $"{data.Timeline}ly  {data.points.ToString().Replace(",","/")}";
+            var dataPoints = JsonConvert.SerializeObject(dataList, new JsonSerializerSettings()
              {
                  NullValueHandling = NullValueHandling.Ignore
              });
+            chartDeets["DataPoints"] = JToken.Parse(dataPoints); 
+            var asJson = chartDeets.ToString();
 
-             return Content(convertedJson);    
+             return Content(chartDeets.ToString());    
         }
         
         [HttpGet]
