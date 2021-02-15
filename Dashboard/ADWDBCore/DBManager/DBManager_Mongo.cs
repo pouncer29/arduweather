@@ -122,7 +122,7 @@ namespace DBMan
         {
             var now = DateTime.Today;
             var dailyEntries = this.getEntriesInRange(now);
-            return this.weatherChartData(dailyEntries,fields);
+            return this.weatherChartData(dailyEntries,fields,"HH:mm");
 
         }
 
@@ -140,7 +140,7 @@ namespace DBMan
             //This week
             var pastWeek = DateTime.Today.AddDays(-7);
             var weeklyEntries = this.getEntriesInRange(pastWeek,fields);
-            return this.weatherChartData(weeklyEntries,fields);
+            return this.weatherChartData(weeklyEntries,fields,"dddd, HH:mm");
         }
 
         /// <summary>
@@ -155,7 +155,7 @@ namespace DBMan
 
             var montlyEntries = this.getEntriesInRange(pastMonth);
             
-            return this.weatherChartData(montlyEntries, fields);
+            return this.weatherChartData(montlyEntries, fields,"MMMM dd, HH:mm");
         }
 
         /// <summary>
@@ -174,7 +174,7 @@ namespace DBMan
 
             var yearlyEntries = this.getEntriesInRange(pastYear);
 
-            return this.weatherChartData(yearlyEntries,fields);
+            return this.weatherChartData(yearlyEntries,fields,"MM/dd/yyyy, HH:mm");
         }
 
         /// <summary>
@@ -209,7 +209,7 @@ namespace DBMan
         /// <param name="docs"></param>
         /// <param name="fields"></param>
         /// <returns></returns>
-        private List <object> weatherChartData(List<BsonDocument> docs,DataPoint fields=DataPoint.all)
+        private List <object> weatherChartData(List<BsonDocument> docs,DataPoint fields=DataPoint.all,String timeFormat="d")
         {
             var weatherData = new List<WeatherEntry>();
             
@@ -232,7 +232,7 @@ namespace DBMan
                 docs.ForEach(doc =>
                 {
                     //ALWAYS add Time
-                    var newWeatherEntry = new WeatherEntry(this.GetTime(doc[DBDeets.TimeKey].ToString(), "d"));
+                    var newWeatherEntry = new WeatherEntry(this.GetTime(doc[DBDeets.TimeKey].ToString(), timeFormat));
                     
                     //Add Temperature
                     if (fields.HasFlag(DataPoint.temperature))
@@ -397,8 +397,8 @@ namespace DBMan
             
             //Populate dictionary
             latestEntry[DataPoint.timestamp] = result[DBDeets.TimeKey].ToString();
-            latestEntry[DataPoint.temperature] = result[DBDeets.TemperatureKey].ToString();
-            latestEntry[DataPoint.humidity] = result[DBDeets.HumidityKey].ToString();
+            latestEntry[DataPoint.temperature] = float.Parse(result[DBDeets.TemperatureKey].ToString()).ToString("0.00");
+            latestEntry[DataPoint.humidity] = float.Parse(result[DBDeets.HumidityKey].ToString()).ToString("0.0");
             latestEntry[DataPoint.brightness] = result[DBDeets.BrightnessKey].ToString();
             latestEntry[DataPoint.windDirection] = result[DBDeets.WindDirectionKey].ToString();
             latestEntry[DataPoint.windSpeed] = result[DBDeets.WindSpeedKey].ToString();
