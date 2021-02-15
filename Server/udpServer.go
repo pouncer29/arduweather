@@ -80,7 +80,7 @@ func toDatabase(e *entry) string{
 		e.Temp, e.Humidity, e.WindSpeed, e.Brightness, timestamp)
 	log.Printf("Received %s\n",row);
 
-	client,err := mongo.NewClient(options.Client().ApplyURI("mongodb://127.0.0.1:27017/"))
+	client,err := mongo.NewClient(options.Client().ApplyURI("mongodb://172.16.1.69:27017/"))
 	if err != nil{
 		log.Fatal(err)
 	}

@@ -5,8 +5,8 @@ Description=Ardweather UDP server
 Type=simple
 Restart=always
 RestartSec=10
-User=pi
-ExecStart=/home/pi/Projects/arduweather/Server/adwServer
+User=gurgi
+ExecStart=/home/gurgi/Projects/arduweather/Server/adwServer
 
 
 [Install]
