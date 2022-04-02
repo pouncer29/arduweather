@@ -91,16 +91,10 @@ void setup() {
 
 
 float getTemperature(){
-  int correction = 0;
-  float reading = analogRead(A0);
-  float voltage = reading * 5.0;
-  voltage = voltage / 1024.0;
-  float temp = (voltage - 0.5) * 100;
-  temp += correction;
 
   float tempTwo = dht.readTemperature();
-  Serial.print("Temperature Readings were:");Serial.print(temp);Serial.print(":");Serial.println(tempTwo);
-  float avgTemp = (temp + tempTwo)/2.0;
+  Serial.print("Temperature Readings were:");Serial.println(tempTwo);
+//  float avgTemp = (temp + tempTwo)/2.0;
   return tempTwo;
 }
 
@@ -130,8 +124,8 @@ StaticJsonDocument<256> createEntry(){
   StaticJsonDocument<256> entry;
   float temp = getTemperature();
   float humidity = getHumidity();
-  float brightness = getBright();
-  float windSpeed = getWindSpeed();
+  float brightness = 0.0; //getBright();
+  float windSpeed = 0.0; //getWindSpeed();
   
   entry["Temp"] = temp;
   entry["Humidity"] = humidity;
@@ -157,7 +151,7 @@ void loop() {
   } else if (elapsed_sendData > sendTime){
     //Serial.println("Sending details");
     
-    IPAddress remoteIP(172,16,1,74);
+    IPAddress remoteIP(172,16,1,73); //TODO: SWITCH THIS 
     Serial.print(remoteIP);
     Serial.println(20001);
 
