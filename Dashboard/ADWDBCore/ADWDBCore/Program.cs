@@ -19,10 +19,10 @@ namespace ADWDBCore
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder => { 
-			webBuilder.UseStartup<Startup>()
+			webBuilder.UseStartup<Startup>();
 			//.UseUrls("https://172.16.1.74:5001");
-			.UseUrls("https://172.16.1.73:5001");
-			//.UseUrls("https://localhost:5001");
+			//.UseUrls("https://172.16.1.73:5001");
+			//.UseUrls("http://0.0.0.0:5000");
 			});
     }
 }

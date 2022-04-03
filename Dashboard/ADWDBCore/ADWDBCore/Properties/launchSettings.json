@@ -15,7 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "ADWDBCore": {
+    "ADWDBCore_LAN": {
       "commandName": "Project",
       "launchBrowser": true,
       "applicationUrl": "https://172.16.1.73:5001;http://172.16.1.73:5000",
@@ -23,6 +23,13 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
+	"ADWDBCore":{
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+	},
     "ADWDBCore_gurgi": {
       "commandName": "Project",
       "launchBrowser": true,

@@ -4,7 +4,9 @@ services:
      - "20001:20001/udp"
     build:
       context: ./Server
-    container_name: adwdb-receiver
+    container_name: adwdb_receiver
+    depends_on:
+      - weather-db
 
   weather-db:
     image: mongo
@@ -13,3 +15,13 @@ services:
     environment:
       - MONGO_INITDB_DATABASE="adwdb"
     container_name: adwdb
+
+  dashboard:
+    build:
+      context: ./Dashboard/ADWDBCore
+    ports:
+      - 5000:5000
+      - 5001:5001
+    container_name: adwdb_dashboard
+    depends_on:
+      - weather-db
