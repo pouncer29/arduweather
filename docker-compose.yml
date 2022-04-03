@@ -1,0 +1,15 @@
+services:
+  udp-receiver:
+    ports: 
+     - "20001:20001/udp"
+    build:
+      context: ./Server
+    container_name: adwdb-receiver
+
+  weather-db:
+    image: mongo
+    ports:
+     - 27017:27017
+    environment:
+      - MONGO_INITDB_DATABASE="adwdb"
+    container_name: adwdb
