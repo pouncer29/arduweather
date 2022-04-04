@@ -1,5 +1,6 @@
 FROM golang:1.18-alpine
 WORKDIR /usr/src/app
+ENV TZ="America/Regina"
 
 # Copy app files
 COPY go.mod go.sum ./

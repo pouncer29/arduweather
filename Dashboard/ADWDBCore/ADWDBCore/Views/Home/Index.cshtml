@@ -143,12 +143,10 @@
         }
     </script>
 
-
-
 </head>
   <body>
  <div class="jumbotron">
-     <h1>What Is the Weather Like On The Deck?</h1>
+     <h1>System Status:</h1>
      <h3>&#64</h3>
      <h3>@ViewBag.Timestamp</h3>
  </div>
@@ -160,12 +158,14 @@
      <h4>Humidity: @ViewBag.Humidity&#37</h4>
  </div>
  
+<!--
  <div class="row">
      <h4>Brightness: @ViewBag.Brightness &#9728</h4>
  </div>
  <div class="row">
      <h4>Wind Speed: @ViewBag.WindSpeed -> @ViewBag.WindDir</h4> 
  </div>
+!-->
  
   <div style="overflow:auto;white-space:nowrap">
       <form id="ChartDrawForm" action="" enctype="application/x-www-form-urlencoded">
@@ -179,10 +179,11 @@
           <label for="TemperatureBox"> Temperature</label>
           <input type="checkbox" id="HumidityBox" onclick="DrawCustom()" name="HumidityBox" value="4"/>
           <label for="HumidityBox"> Humidity</label>
+		  <!--
           <input type="checkbox" id="BrightnessBox" onclick="DrawCustom()" name="BrightnessBox" value="8"/>
           <label for="BrightnessBox"> Brightness</label>
           <input type="checkbox" id="WindSpeedBox" onclick="DrawCustom()" name="WindSpeedBox" value="16"/>
-          <label for="WindSpeedBox"> WindSpeed</label>
+          <label for="WindSpeedBox"> WindSpeed</label> !-->
           <!--<input type="submit" value="Draw"/> !-->
       </form>
   </div>
@@ -194,8 +195,3 @@
     <div id="All_Week_Chart" style="width: 900px; height: 500px"></div>
     <div id="All_Day_Chart" style="width: 900px; height: 500px"></div>
   </body>
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>

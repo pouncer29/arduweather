@@ -1,6 +1,9 @@
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 WORKDIR /app
 
+#Set Timezone
+ENV TZ="America/Regina"
+
 # Copy sln
 COPY *.sln .
 

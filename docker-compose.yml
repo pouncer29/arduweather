@@ -4,6 +4,8 @@ services:
      - "20001:20001/udp"
     build:
       context: ./Server
+    environment:
+      - TZ=America/Regina
     container_name: adwdb_receiver
     depends_on:
       - weather-db
@@ -14,11 +16,14 @@ services:
      - 27017:27017
     environment:
       - MONGO_INITDB_DATABASE="adwdb"
+      - TZ=America/Regina
     container_name: adwdb
 
   dashboard:
     build:
       context: ./Dashboard/ADWDBCore
+    environment:
+      - TZ=America/Regina
     ports:
       - 5000:5000
       - 5001:5001
