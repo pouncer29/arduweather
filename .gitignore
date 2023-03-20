@@ -145,4 +145,4 @@ _[Ss]cripts
 /config/master.key
 
 *.sum
-/dashboard_rails/tmp/cache/
+/dashboard_rails/tmp/
