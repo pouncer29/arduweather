@@ -97,15 +97,15 @@ func toDatabase(e *entry) string{
 
 	//Grab Collection
 	adwdb := client.Database("adwdb")
-	liveWeatherCollection := adwdb.Collection("MONTH")
+	liveWeatherCollection := adwdb.Collection("reports")
 
 	entryResult,err:= liveWeatherCollection.InsertOne(ctx, bson.D{
-		{Key:"Timestamp",Value:timestamp},
-		{Key:"TEMPERATURE",Value:e.Temp},
-		{Key:"Humidity",Value:e.Humidity},
-		{Key:"Brightness",Value:e.Brightness},
-		{Key:"WindSpeed",Value:e.WindSpeed},
-		{Key:"WindDir",Value:e.WindDir},
+		{Key:"timestamp",Value:timestamp},
+		{Key:"temp",Value:e.Temp},
+		{Key:"humidity",Value:e.Humidity},
+		{Key:"brightness",Value:e.Brightness},
+		{Key:"windSpeed",Value:e.WindSpeed},
+		{Key:"windDir",Value:e.WindDir},
 		})
 
 	if(err != nil){
