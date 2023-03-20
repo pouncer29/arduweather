@@ -124,3 +124,25 @@ _[Ss]cripts
 *.dot[Cc]over
 
 
+# Ignore bundler config.
+/.bundle
+
+# Ignore all logfiles and tempfiles.
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+
+# Ignore pidfiles, but keep the directory.
+/tmp/pids/*
+!/tmp/pids/
+!/tmp/pids/.keep
+
+
+/public/assets
+
+# Ignore master key for decrypting credentials and more.
+/config/master.key
+
+*.sum
+/dashboard_rails/tmp/
