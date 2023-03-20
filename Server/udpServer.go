@@ -16,11 +16,11 @@ import (
 
 /* Structs */
 type entry struct {
-	 Humidity float32 `json:"Humidity"`
-	 Temp float32 `json:"Temp"`
-	 Brightness float32 `json:Brightness`
-	 WindSpeed float32 `json:"WindSpeed"`
-	 WindDir string `json:"WindDir"`
+	 Humidity float32
+	 Temp float32
+	 Brightness float32
+	 WindSpeed float32
+	 WindDir string
 }
 /* End Structs*/
 
@@ -60,7 +60,11 @@ func main() {
 		data := []byte(strconv.Itoa(random(1, 1001)))
 
 		log.Printf("data: %s\n", string(data))
-		json.Unmarshal(fromClient, &newEntry)
+		log.Printf("from_client: %s \n",fromClient)
+ 		err = json.Unmarshal([]byte(fromClient), &newEntry)
+ 		if err != nil{
+ 		    log.Fatal(err)
+ 		}
 		toDatabase(&newEntry)
 
 		log.Printf("data: %s\n", string(data))
@@ -76,8 +80,8 @@ func toDatabase(e *entry) string{
 	log.Println("Sending to DB ...")
 	timestamp := time.Now().Unix()
 	log.Printf("Time: %v",timestamp)
-	row := fmt.Sprintf("T:%f, H:%f, WS:%f, BR: %f, Time: %i",
-		e.Temp, e.Humidity, e.WindSpeed, e.Brightness, timestamp)
+	row := fmt.Sprintf("T:%f, H:%f, WS:%f, BR: %f, WD: %s Time: %i",
+		e.Temp, e.Humidity, e.WindSpeed, e.Brightness, e.WindDir,timestamp)
 	log.Printf("Received %s\n",row);
 
 	client,err := mongo.NewClient(options.Client().ApplyURI("mongodb://127.0.0.1:27017/"))
@@ -93,7 +97,7 @@ func toDatabase(e *entry) string{
 
 	//Grab Collection
 	adwdb := client.Database("adwdb")
-	liveWeatherCollection := adwdb.Collection("LIVE_WEATHER_DATA")
+	liveWeatherCollection := adwdb.Collection("MONTH")
 
 	entryResult,err:= liveWeatherCollection.InsertOne(ctx, bson.D{
 		{Key:"Timestamp",Value:timestamp},

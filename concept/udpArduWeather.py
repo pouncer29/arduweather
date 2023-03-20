@@ -13,16 +13,17 @@ import json
 import time
 import random
 
-dbAddr = "gurgi"
+dbAddr = "localhost"
 dbPort = 20001
 
 def generateRandomEntry():
 	entry = dict()
-	entry['Humidity'] = ("%.2f" % (random.random() * 100))
-	entry['Temp'] = ("%.2f" % (random.random() * 100))
-	entry['WindSpeed'] = ("%.2f" % (random.random() * 100))
-	entry['Brightness'] = ("%.2f" % (random.random() * 100))
-	
+	entry['humidity'] = round(random.uniform(30.0,80.5),2)
+	entry['temp'] = round(random.uniform(-10.0,30.5),2)
+	entry['windSpeed'] = round(random.uniform(0.0,50.5),2)
+	entry['brightness'] = round(random.uniform(0,100),2)
+	entry['windDir'] = "N"
+
 	return json.dumps(entry)
 
 import socket
